@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [{
+        "name": "Run GDB",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/executable/main.exe", 
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}/executable", // Working directory
+        "preLaunchTask": "compile", // Task to run before debugging
+        "externalConsole": false,
+        "MIMode": "gdb",
+    },
+    {
+        "name": "Intel Debug Attach",
+        "type": "cppvsdbg",
+        "request": "attach",
+        "processId": "${command:pickProcess}"
+    }
+    ]
+  }

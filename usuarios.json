@@ -1,0 +1,100 @@
+[
+    {
+        "dpi":"654521336523",
+        "nombre_cliente":"Juan Perez",
+        "password":"123456"
+    },
+    {
+        "dpi":"654521346523",
+        "nombre_cliente":"Maria Lopez",
+        "password":"password"
+    },
+    {
+        "dpi":"456789123654",
+        "nombre_cliente":"Antonio Perez",
+        "password":"xdxdxd"
+    },
+    {
+        "dpi": "789456123987",
+        "nombre_cliente": "Ana García",
+        "password": "contraseña123"
+    },
+    {
+        "dpi": "123456789012",
+        "nombre_cliente": "Pedro González",
+        "password": "P@ssw0rd"
+    },
+    {
+        "dpi": "333222111456",
+        "nombre_cliente": "Sofía Martínez",
+        "password": "S0f14M4rt1n3z"
+    },
+    {
+        "dpi": "987654321098",
+        "nombre_cliente": "Diego Rodríguez",
+        "password": "D13g0R0dr1gu3z"
+    },
+    {
+        "dpi": "555444333210",
+        "nombre_cliente": "Camila Díaz",
+        "password": "C4m1l4D14z"
+    },
+    {
+        "dpi": "855444333210",
+        "nombre_cliente": "Carlos Díaz",
+        "password": "C4m1l4D14z"
+    },
+    {
+        "dpi": "564521336523",
+        "nombre_cliente": "Eduardo Morales",
+        "password": "E123456"
+      },
+      {
+        "dpi": "654521346524",
+        "nombre_cliente": "Julia Ramírez",
+        "password": "juliaramirez"
+      },
+      {
+        "dpi": "456789123655",
+        "nombre_cliente": "Marco Flores",
+        "password": "m4rc0fl0r3s"
+      },
+      {
+        "dpi": "789456123988",
+        "nombre_cliente": "Isabel Romero",
+        "password": "1s4b3lr0m3r0"
+      },
+      {
+        "dpi": "123456789013",
+        "nombre_cliente": "Luis García",
+        "password": "L9uisG4rc14"
+      },
+      {
+        "dpi": "333222111457",
+        "nombre_cliente": "Andrea Hernández",
+        "password": "4ndr34h3rn4nd3z"
+      },
+      {
+        "dpi": "987654321099",
+        "nombre_cliente": "Jorge López",
+        "password": "J0rg3L0p3z"
+      },
+      {
+        "dpi": "555444333211",
+        "nombre_cliente": "Valentina Castro",
+        "password": "V4l3nt1n4C4str0"
+      },
+      {
+        "dpi": "855444333211",
+        "nombre_cliente": "Daniel Molina",
+        "password": "D4n13lM0l1n4"
+      },
+      {
+        "dpi": "222333444555",
+        "nombre_cliente": "Esteban Soto",
+        "password": "3st3b4nS0t0"
+      }
+      
+      
+       
+]
