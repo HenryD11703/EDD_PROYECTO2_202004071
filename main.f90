@@ -31,7 +31,7 @@ contains
     subroutine register()
         ! Implement user registration logic here
         print *, "Registrar usuario ----"
-        ! Add your code here
+        ! TODO: al ya tener el arbol, crear el metodo para añadir un usuario
     end subroutine
     
     subroutine login()
@@ -47,12 +47,71 @@ contains
         if (username == "admin" .and. password == "EDD2024") then
             call admin_menu()
         else if (username == "user" .and. password == "user") then
-            !call user_menu() 
+            call user_menu(username) ! Pasar el nombre para tener esos datos de sesion en el menu
             print *, "Usuario logueado"
         else
             print *, "Nombre de usuario o contraseña incorrectos."
              
         end if
+    end subroutine
+    
+    subroutine user_menu(username)
+        character(len=20), intent(in) :: username
+        integer :: choiceU = 0
+        do while (choiceU /= 4)
+            print *, "Bienvenido, ", username
+            print *, "1. Visualizar reportes de las estructuras"
+            print *, "2. Navegacion y gestion de imagenes"
+            print *, "3. Opciones de carga masiva"
+            print *, "4. Salir"
+            print *, "Seleccione una opcion:"
+            read *, choiceU
+            select case (choiceU)
+                case (1)
+                    !call reports_menu(username)
+                case (2)
+                    call image_menu(username)
+                case (3)
+                    call mass_upload_menu(username)
+                case (4)
+                    exit
+                case default
+                    print *, "Opcion Invalida."
+            end select
+        end do
+    end subroutine
+
+    subroutine mass_upload_menu(username)
+        character(len=20), intent(in) :: username
+        integer :: choiceUM = 0
+        do while (choiceUM /= 4)
+            print *, "--", username, "--"
+            print *, "1. Cargar Capas"
+            print *, "2. Cargar Imagenes"
+            print *, "3. Cargar Albumes"
+            print *, "4. Salir"
+            print *, "Seleccione una opcion:"
+            read *, choiceUM
+            select case (choiceUM)
+                case (1)
+                    !Es necesario pasar el nombre para guardar esto por cada cliente
+                    !call cargar_capas(username) 
+                case (2)
+                    !call cargar_imagenes(username)
+                case (3)
+                    !call cargar_albumes(username)
+                case (4)
+                    exit
+                case default
+                    print *, "Opcion Invalida."
+            end select
+        end do
+    end subroutine
+
+    subroutine image_menu(username)
+        character(len=20), intent(in) :: username
+        print *, "USUARIO: ", username
+        ! Implement image management logic here
     end subroutine
 
     subroutine admin_menu()
