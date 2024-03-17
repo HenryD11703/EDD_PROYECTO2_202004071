@@ -95,7 +95,7 @@ contains
             select case (choiceUM)
                 case (1)
                     !Es necesario pasar el nombre para guardar esto por cada cliente
-                    !call cargar_capas(username) 
+                    call cargar_capas(username) 
                 case (2)
                     !call cargar_imagenes(username)
                 case (3)
@@ -106,6 +106,57 @@ contains
                     print *, "Opcion Invalida."
             end select
         end do
+    end subroutine
+
+    subroutine cargar_capas(username)! Para cargar capas se procesara un archivo json, 
+                                     ! se leera y se guardara en la matriz dispersa? saber xD
+        use json_module
+        implicit none
+        type(json_file) :: json
+        type(json_value), pointer :: list_p, capa_p, attribute_p, pixeles_p, pixeles_child_p
+        type(json_core) :: jsonc
+        !los atributos a leer de este json seran id_capa, pixeles, que sera una lista de
+        !fila, columna, color
+        character(len=20), intent(in) :: username
+        integer :: id_capa, iP, fila, columna
+        character(:), allocatable :: color
+        integer :: size,iJ,size2,iCC
+        logical :: found
+        call jsonc%initialize()
+        call json%load(filename="D:\EDD_PROYECTO2_202004071\capas.json")
+        call json%info('', n_children=size)
+        call json%get_core(jsonc)
+        call json%get('', list_p, found)  
+        
+        do iCC=1 , size
+            call jsonc%get_child(list_p, iCC, capa_p, found)
+            call jsonc%get_child(capa_p, 'id_capa', attribute_p, found=found)
+            if(found) call jsonc%get(attribute_p, id_capa)
+            call jsonc%get_child(capa_p, 'pixeles', pixeles_p, found=found)
+            call jsonc%info(pixeles_p, n_children=size2)
+            print *, "ID Capa: ", id_capa
+            print *, "Pixeles: ", size2  
+            !por cada pixel recorrer sus atributos de fila, columna y color
+            do iP = 1, size2
+                call jsonc%get_child(pixeles_p, iP, pixeles_child_p, found)
+                if (.not. found) cycle  
+
+                call jsonc%get_child(pixeles_child_p, 'fila', attribute_p, found=found)
+                if (found) call jsonc%get(attribute_p, fila)
+
+                call jsonc%get_child(pixeles_child_p, 'columna', attribute_p, found=found)
+                if (found) call jsonc%get(attribute_p, columna)
+
+                call jsonc%get_child(pixeles_child_p, 'color', attribute_p, found=found)
+                if (found) call jsonc%get(attribute_p, color)  
+
+                ! TODO: Guardar estos datos en la estructura y guardarla con el nombre
+                ! del usuario ya que esta es unica para cada usuario
+                print *, "Fila: ", fila, " Columna: ", columna, " Color: ", color
+            end do
+                  
+        end do
+
     end subroutine
 
     subroutine image_menu(username)
