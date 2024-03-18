@@ -11,9 +11,9 @@
           "-o",
           "executable/main.exe",
           "main.f90",
-          "Estructuras/BTree.f90",
-          //"Estructuras/ListaEnlazada.f90",
-          //"Estructuras/stack.f90",
+          "Estructuras/sMatrix/Header.f90",
+          "Estructuras/sMatrix/Matrix.f90",
+          "Estructuras/sMatrix/Types.f90",
           "./lib/libjsonfortran.a"
         ],
         "options": {  // Working directory

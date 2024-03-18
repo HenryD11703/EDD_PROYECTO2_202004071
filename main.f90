@@ -85,7 +85,7 @@ contains
         character(len=20), intent(in) :: username
         integer :: choiceUM = 0
         do while (choiceUM /= 4)
-            print *, "--", username, "--"
+            print *, "----------", trim(username), "----------"
             print *, "1. Cargar Capas"
             print *, "2. Cargar Imagenes"
             print *, "3. Cargar Albumes"
@@ -97,9 +97,9 @@ contains
                     !Es necesario pasar el nombre para guardar esto por cada cliente
                     call cargar_capas(username) 
                 case (2)
-                    !call cargar_imagenes(username)
+                    call cargar_imagenes(username)
                 case (3)
-                    !call cargar_albumes(username)
+                    call cargar_albumes(username)
                 case (4)
                     exit
                 case default
@@ -108,6 +108,74 @@ contains
         end do
     end subroutine
 
+    subroutine cargar_imagenes(username)
+        use json_module
+        implicit none
+        type(json_file) :: json
+        type(json_value), pointer :: list_p, attribute_p, imagen_p, capas_array_p
+        type(json_core) :: jsonc
+        integer :: idimg,capas_size
+        integer :: size,iJ, iCapa
+        logical :: found
+        character(len=20), intent(in) :: username
+        print *, "USUARIO: ", username
+        call jsonc%initialize()
+        call json%load(filename="D:\EDD_PROYECTO2_202004071\jsonFiles\imagenes.json")
+        call json%info('', n_children=size) 
+        call json%get_core(jsonc)
+        call json%get('', list_p, found)
+        do iJ=1 , size
+            call jsonc%get_child(list_p, iJ, imagen_p, found)
+            call jsonc%get_child(imagen_p, 'id', attribute_p, found=found)
+            if(found) call jsonc%get(attribute_p, idimg)
+            print *, "ID Imagen: ", idimg
+            call jsonc%get_parent(capas_array_p,attribute_p)
+            call jsonc%get_child(imagen_p, 'capas', capas_array_p, found=found)
+            call jsonc%info(capas_array_p, n_children=capas_size)
+            do iCapa=1 , capas_size
+                call jsonc%get_child(capas_array_p, iCapa, attribute_p, found)
+                if(found) call jsonc%get(attribute_p, idimg)
+                print *, "ID Capa: ", idimg
+            end do
+
+        end do
+        call json%destroy()
+    end subroutine
+
+    subroutine cargar_albumes(username)
+        use json_module
+        implicit none
+        type(json_file) :: json
+        type(json_value), pointer :: list_p, album_p, attribute_p, nombre_p, imags_array_p, imagen_p
+        type(json_core) :: jsonc
+        integer :: idimg,imags_size
+        character(len=20), intent(in) :: username
+        character(:), allocatable :: nombre_album
+        integer :: size,iJ, iImg
+        logical :: found
+        call jsonc%initialize()
+        call json%load(filename="D:\EDD_PROYECTO2_202004071\jsonFiles\albumes.json")
+        call json%info('', n_children=size)
+        call json%get_core(jsonc)
+        call json%get('', list_p, found)
+        do iJ=1 , size
+            call jsonc%get_child(list_p, iJ, album_p, found)
+            call jsonc%get_child(album_p, 'nombre_album', nombre_p, found=found)
+            if(found) call jsonc%get(nombre_p, nombre_album)
+            print *, "Nombre Album: ", trim(nombre_album)
+            call jsonc%get_child(album_p, 'imgs', imags_array_p, found=found)
+            call jsonc%info(imags_array_p, n_children=imags_size)
+            do iImg=1 , imags_size
+                call jsonc%get_child(imags_array_p, iImg, imagen_p, found)
+                if(found) call jsonc%get(imagen_p, idimg)
+                print *, "ID Imagen: ", idimg
+            end do
+        end do    
+    end subroutine
+
+    !las capas las guardare en la matriz dispersa ya que aca guardare la informacion
+    !de los pixeles para cuando se carge una imagen aca se indicara que pixeles se
+    !usaran para mostrar la imagen, SUPONGO JAJA XD
     subroutine cargar_capas(username)! Para cargar capas se procesara un archivo json, 
                                      ! se leera y se guardara en la matriz dispersa? saber xD
         use json_module
@@ -123,7 +191,7 @@ contains
         integer :: size,iJ,size2,iCC
         logical :: found
         call jsonc%initialize()
-        call json%load(filename="D:\EDD_PROYECTO2_202004071\capas.json")
+        call json%load(filename="D:\EDD_PROYECTO2_202004071\jsonFiles\capas.json")
         call json%info('', n_children=size)
         call json%get_core(jsonc)
         call json%get('', list_p, found)  
@@ -200,7 +268,7 @@ contains
         integer :: size,iJ
         logical :: found
         call jsonc%initialize()
-        call json%load(filename="D:\EDD_PROYECTO2_202004071\usuarios.json")
+        call json%load(filename="D:\EDD_PROYECTO2_202004071\jsonFiles\usuarios.json")
         call json%info('', n_children=size)
         call json%get_core(jsonc)
         call json%get('', list_p, found)
