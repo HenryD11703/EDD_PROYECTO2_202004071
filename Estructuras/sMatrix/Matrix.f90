@@ -44,7 +44,8 @@ module matrix_m
   
     subroutine add(self, row, col, value)
       class(matrix_t), intent(inout) :: self
-      integer, intent(in) :: row, col, value
+      integer, intent(in) :: row, col
+      character(:), allocatable :: value
   
       type(header_node), pointer :: row_hdr_n
       type(header_node), pointer :: col_hdr_n
@@ -249,7 +250,7 @@ module matrix_m
         do col = 1, num_cols
           if (associated(current_node)) then
             if(current_node%col == col) then
-              write(*, '(I5)', advance='no') current_node%value
+              write(*, '(a)', advance='no') current_node%value
               current_node => current_node%right
             else
               write(*, '(I5)', advance='no') 0
@@ -330,10 +331,12 @@ module matrix_m
         do while (associated(current_mtx_node))
           ! create matrix node
           address = self%get_address_memory(current_mtx_node)
-          write(aux2, '(I0)') current_mtx_node%value
-          createMtxNodes = createMtxNodes // '  "' // trim(address) // '" [label = "' // trim(aux2)
+          write(aux2, '(a)') current_mtx_node%value
+          createMtxNodes = createMtxNodes // '  "' // trim(address) // '" [label = "' // trim(aux2) 
+          createMtxNodes = createMtxNodes // '",  color =" ' // trim(aux2)
           write(aux2, '(I0)') current_mtx_node%col 
-          createMtxNodes = createMtxNodes // '" group = ' // trim(aux2) // '];' // new_line('a')
+          createMtxNodes = createMtxNodes // '"  group = ' // trim(aux2) // &
+          ' style = filled ];' // new_line('a')
           ! align matrix nodes
           alignRows = alignRows // '"' // trim(address) // '";'
           ! link matrix nodes RIGHT, LEFT, DOWN, UP

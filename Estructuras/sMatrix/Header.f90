@@ -4,7 +4,8 @@ module Header_m
 
 
     type, public :: matrix_node
-        integer :: value, row, col
+        integer ::  row, col
+        character(:), allocatable :: value
         type(matrix_node), pointer :: left => null()
         type(matrix_node), pointer :: right => null()
         type(matrix_node), pointer :: up => null()

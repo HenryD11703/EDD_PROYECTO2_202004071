@@ -1,78 +1,459 @@
 [
     {
-        "id_capa": 0,
-        "pixeles": [
-            {
-                "fila": 25,
-                "columna": 31,
-                "color": "#FFCC33"
-            },
-            {
-                "fila": 38,
-                "columna": 31,
-                "color": "#FFCC40"
-            },
-            {
-                "fila": 36,
-                "columna": 31,
-                "color": "#FFCC40"
-            },
-            {
-                "fila": 228,
-                "columna": 31,
-                "color": "#FFCC40"
-            },
-            {
-                "fila": 382,
-                "columna": 31,
-                "color": "#FFCC40"
-            }
-        ]
-        
+      "id_capa": 13,
+      "pixeles": [
+        {
+          "fila": 10,
+          "columna": 20,
+          "color": "#FF0000" 
+        },
+        {
+          "fila": 30,
+          "columna": 5,
+          "color": "#00FF00"
+        },
+        {
+          "fila": 50,
+          "columna": 40,
+          "color": "#0000FF" 
+        },
+        {
+          "fila": 25,
+          "columna": 15,
+          "color": "#FFFF00" 
+        },
+        {
+          "fila": 45,
+          "columna": 30,
+          "color": "#FF00FF"
+        }
+      ]
     },
     {
-        "id_capa": 1,
-        "pixeles": [
-            {
-                "fila": 25,
-                "columna": 31,
-                "color": "#FFCC27"
-            },
-            {
-                "fila": 38,
-                "columna": 31,
-                "color": "#FFCC40"
-            },
-            {
-                "fila": 25,
-                "columna": 32,
-                "color": "#FFCC27"
-            },
-            {
-                "fila": 38,
-                "columna": 32,
-                "color": "#FFCC40"
-            }
-        ]
+      "id_capa": 1,
+      "pixeles": [
+        {
+          "fila": 15,
+          "columna": 35,
+          "color": "#FFCC33"
+        },
+        {
+          "fila": 20,
+          "columna": 25,
+          "color": "#FFCC40"
+        },
+        {
+          "fila": 40,
+          "columna": 10,
+          "color": "#9933FF"
+        },
+        {
+          "fila": 35,
+          "columna": 45,
+          "color": "#00FFFF"
+        }
+      ]
     },
     {
-        "id_capa": 2,
-        "pixeles": [
-            {
-                "fila": 25,
-                "columna": 31,
-                "color": "#FFCC27"
-            },
-            {
-                "fila": 38,
-                "columna": 31,
-                "color": "#FFCC40"
-            },
-            {
-                "fila": 25,
-                "columna": 32,
-                "color": "#FFCC27"
-            } 
-        ]
+      "id_capa": 2,
+      "pixeles": [
+        {
+          "fila": 5,
+          "columna": 10,
+          "color": "#808080"
+        },
+        {
+          "fila": 55,
+          "columna": 50,
+          "color": "#C0C0C0" 
+        },
+        {
+          "fila": 25,
+          "columna": 25,
+          "color": "#FFFFFF" 
+        },
+        {
+          "fila": 45,
+          "columna": 15,
+          "color": "#000000" 
+        }
+      ]
+    },
+    {
+      "id_capa": 3,
+      "pixeles": [
+        {
+          "fila": 10,
+          "columna": 5,
+          "color": "#FF0000" 
+        },
+        {
+          "fila": 30,
+          "columna": 20,
+          "color": "#00FF00"
+        },
+        {
+          "fila": 50,
+          "columna": 35,
+          "color": "#0000FF" 
+        },
+        {
+          "fila": 25,
+          "columna": 40,
+          "color": "#FFFF00" 
+        },
+        {
+          "fila": 45,
+          "columna": 30,
+          "color": "#FF00FF"
+        }
+      ]
+    },
+    {
+      "id_capa": 4,
+      "pixeles": [
+        {
+          "fila": 15,
+          "columna": 35,
+          "color": "#FFCC33"
+        },
+        {
+          "fila": 20,
+          "columna": 25,
+          "color": "#FFCC40"
+        },
+        {
+          "fila": 40,
+          "columna": 10,
+          "color": "#9933FF"
+        },
+        {
+          "fila": 35,
+          "columna": 45,
+          "color": "#00FFFF"
+        }
+      ]
+    },
+    {
+      "id_capa": 5,
+      "pixeles": [
+        {
+          "fila": 5,
+          "columna": 10,
+          "color": "#808080"
+        },
+        {
+          "fila": 55,
+          "columna": 50,
+          "color": "#C0C0C0" 
+        },
+        {
+          "fila": 25,
+          "columna": 25,
+          "color": "#FFFFFF" 
+        },
+        {
+          "fila": 45,
+          "columna": 15,
+          "color": "#000000" 
+        }
+      ]
+    },
+    {
+      "id_capa": 6,
+      "pixeles": [
+        {
+          "fila": 10,
+          "columna": 5,
+          "color": "#FF0000" 
+        },
+        {
+          "fila": 30,
+          "columna": 20,
+          "color": "#00FF00"
+        },
+        {
+          "fila": 50,
+          "columna": 35,
+          "color": "#0000FF" 
+        },
+        {
+          "fila": 25,
+          "columna": 40,
+          "color": "#FFFF00" 
+        },
+        {
+          "fila": 45,
+          "columna": 30,
+          "color": "#FF00FF"
+        }
+      ]
+    },
+    {
+      "id_capa": 7,
+      "pixeles": [
+        {
+          "fila": 15,
+          "columna": 35,
+          "color": "#FFCC33"
+        },
+        {
+          "fila": 20,
+          "columna": 25,
+          "color": "#FFCC40"
+        },
+        {
+          "fila": 40,
+          "columna": 10,
+          "color": "#9933FF"
+        },
+        {
+          "fila": 35,
+          "columna": 45,
+          "color": "#00FFFF"
+        }
+      ]
+    },
+    {
+      "id_capa": 8,
+      "pixeles": [
+        {
+          "fila": 5,
+          "columna": 10,
+          "color": "#808080"
+        },
+        {
+          "fila": 55,
+          "columna": 50,
+          "color": "#C0C0C0" 
+        },
+        {
+          "fila": 25,
+          "columna": 25,
+          "color": "#FFFFFF" 
+        },
+        {
+          "fila": 45,
+          "columna": 15,
+          "color": "#000000" 
+        }
+      ]
+    },
+    {
+      "id_capa": 9,
+      "pixeles": [
+        {
+          "fila": 10,
+          "columna": 5,
+          "color": "#FF0000" 
+        },
+        {
+          "fila": 30,
+          "columna": 20,
+          "color": "#00FF00"
+        },
+        {
+          "fila": 50,
+          "columna": 35,
+          "color": "#0000FF" 
+        },
+        {
+          "fila": 25,
+          "columna": 40,
+          "color": "#FFFF00" 
+        },
+        {
+          "fila": 45,
+          "columna": 30,
+          "color": "#FF00FF"
+        }
+      ]
+    },
+    {
+      "id_capa": 10,
+      "pixeles": [
+        {
+          "fila": 15,
+          "columna": 35,
+          "color": "#FFCC33"
+        },
+        {
+          "fila": 20,
+          "columna": 25,
+          "color": "#FFCC40"
+        },
+        {
+          "fila": 40,
+          "columna": 10,
+          "color": "#9933FF"
+        },
+        {
+          "fila": 35,
+          "columna": 45,
+          "color": "#00FFFF"
+        }
+      ]
+    },
+    {
+      "id_capa": 11,
+      "pixeles": [
+        {
+          "fila": 5,
+          "columna": 10,
+          "color": "#808080"
+        },
+        {
+          "fila": 55,
+          "columna": 50,
+          "color": "#C0C0C0" 
+        },
+        {
+          "fila": 25,
+          "columna": 25,
+          "color": "#FFFFFF" 
+        },
+        {
+          "fila": 45,
+          "columna": 15,
+          "color": "#000000" 
+        }
+      ]
+    },
+    {
+      "id_capa": 12,
+      "pixeles": [
+        {
+          "fila": 10,
+          "columna": 5,
+          "color": "#FF0000" 
+        },
+        {
+          "fila": 30,
+          "columna": 20,
+          "color": "#00FF00"
+        },
+        {
+          "fila": 50,
+          "columna": 35,
+          "color": "#0000FF" 
+        },
+        {
+          "fila": 25,
+          "columna": 40,
+          "color": "#FFFF00" 
+        },
+        {
+          "fila": 45,
+          "columna": 30,
+          "color": "#FF00FF"
+        }
+      ]
+    },
+    {
+      "id_capa": 13,
+      "pixeles": [
+        {
+          "fila": 15,
+          "columna": 35,
+          "color": "#FFCC33"
+        },
+        {
+          "fila": 20,
+          "columna": 25,
+          "color": "#FFCC40"
+        },
+        {
+          "fila": 40,
+          "columna": 10,
+          "color": "#9933FF"
+        },
+        {
+          "fila": 35,
+          "columna": 45,
+          "color": "#00FFFF"
+        }
+      ]
+    },
+    {
+      "id_capa": 14,
+      "pixeles": [
+        {
+          "fila": 5,
+          "columna": 10,
+          "color": "#808080"
+        },
+        {
+          "fila": 55,
+          "columna": 50,
+          "color": "#C0C0C0" 
+        },
+        {
+          "fila": 25,
+          "columna": 25,
+          "color": "#FFFFFF" 
+        },
+        {
+          "fila": 45,
+          "columna": 15,
+          "color": "#000000" 
+        }
+      ]
+    },
+    {
+      "id_capa": 15,
+      "pixeles": [
+        {
+          "fila": 10,
+          "columna": 5,
+          "color": "#FF0000" 
+        },
+        {
+          "fila": 30,
+          "columna": 20,
+          "color": "#00FF00"
+        },
+        {
+          "fila": 50,
+          "columna": 35,
+          "color": "#0000FF" 
+        },
+        {
+          "fila": 25,
+          "columna": 40,
+          "color": "#FFFF00" 
+        },
+        {
+          "fila": 45,
+          "columna": 30,
+          "color": "#FF00FF"
+        }
+      ]
+    },
+    {
+      "id_capa": 16,
+      "pixeles": [
+        {
+          "fila": 15,
+          "columna": 35,
+          "color": "#FFCC33"
+        },
+        {
+          "fila": 20,
+          "columna": 25,
+          "color": "#FFCC40"
+        },
+        {
+          "fila": 40,
+          "columna": 10,
+          "color": "#9933FF"
+        },
+        {
+          "fila": 35,
+          "columna": 45,
+          "color": "#00FFFF"
+        }
+      ]
     }
-]
+
+  ]
+  

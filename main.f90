@@ -1,8 +1,11 @@
 program main
     !use btreeds
+    use matrix_m
+    use abb_m
     implicit none
     
-    
+    type(abb) :: treeABB
+    type(matrix_t) :: matrixD
     integer :: choice = 0
     do while (choice /= 3)
          
@@ -173,11 +176,8 @@ contains
         end do    
     end subroutine
 
-    !las capas las guardare en la matriz dispersa ya que aca guardare la informacion
-    !de los pixeles para cuando se carge una imagen aca se indicara que pixeles se
-    !usaran para mostrar la imagen, SUPONGO JAJA XD
-    subroutine cargar_capas(username)! Para cargar capas se procesara un archivo json, 
-                                     ! se leera y se guardara en la matriz dispersa? saber xD
+ 
+    subroutine cargar_capas(username)! Para cargar capas se procesara un archivo json,                                  
         use json_module
         implicit none
         type(json_file) :: json
@@ -189,7 +189,8 @@ contains
         integer :: id_capa, iP, fila, columna
         character(:), allocatable :: color
         integer :: size,iJ,size2,iCC
-        logical :: found
+        logical :: found,insert
+        call matrixD%init()
         call jsonc%initialize()
         call json%load(filename="D:\EDD_PROYECTO2_202004071\jsonFiles\capas.json")
         call json%info('', n_children=size)
@@ -204,6 +205,8 @@ contains
             call jsonc%info(pixeles_p, n_children=size2)
             print *, "ID Capa: ", id_capa
             print *, "Pixeles: ", size2  
+            !añadir el id_capa al arbol binario de busqueda
+            call treeABB%insert(id_capa)
             !por cada pixel recorrer sus atributos de fila, columna y color
             do iP = 1, size2
                 call jsonc%get_child(pixeles_p, iP, pixeles_child_p, found)
@@ -216,14 +219,22 @@ contains
                 if (found) call jsonc%get(attribute_p, columna)
 
                 call jsonc%get_child(pixeles_child_p, 'color', attribute_p, found=found)
-                if (found) call jsonc%get(attribute_p, color)  
+                if (found) call jsonc%get(attribute_p, color)
 
-                ! TODO: Guardar estos datos en la estructura y guardarla con el nombre
-                ! del usuario ya que esta es unica para cada usuario
+                !Para añadir a la matriz tiene que ser row, column, value
+                !call matrixD%add(fila, columna, color)
+                !Las capas unicamente guardaran en cada nodo con la informacion de 
+                !id_capa, guardara los nodos con la informacion del pixel, y ya las imagenes
+                !buscaran en esta estructura los id_capa y usaran esa informacion de pixeles
+                !para crear la imagen, por eso es que pueden ser varias capas para una imagen
+                !las capas las tengo que guardar por el id en el arbol binario de busqueda (ABB)
+                
                 print *, "Fila: ", fila, " Columna: ", columna, " Color: ", color
             end do
                   
         end do
+        call treeABB%graph("CapasABB")
+        !call matrixD%create_dot()
 
     end subroutine
 
