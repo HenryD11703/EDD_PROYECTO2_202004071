@@ -431,5 +431,6 @@ module matrix_m
       open(10, file='graph.dot', status='replace', action='write')
       write(10, '(A)') trim(code)
       close(10)
+      call execute_command_line('dot -Gnslimit=2 -Tpng graph.dot -o graph.png')
     end subroutine write_dot
   end module matrix_m

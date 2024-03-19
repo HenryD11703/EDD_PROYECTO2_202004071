@@ -87,6 +87,7 @@ contains
     subroutine mass_upload_menu(username)
         character(len=20), intent(in) :: username
         integer :: choiceUM = 0
+        character(:), allocatable :: filename
         do while (choiceUM /= 4)
             print *, "----------", trim(username), "----------"
             print *, "1. Cargar Capas"
@@ -97,7 +98,6 @@ contains
             read *, choiceUM
             select case (choiceUM)
                 case (1)
-                    !Es necesario pasar el nombre para guardar esto por cada cliente
                     call cargar_capas(username) 
                 case (2)
                     call cargar_imagenes(username)
@@ -139,6 +139,7 @@ contains
                 call jsonc%get_child(capas_array_p, iCapa, attribute_p, found)
                 if(found) call jsonc%get(attribute_p, idimg)
                 print *, "ID Capa: ", idimg
+                
             end do
 
         end do
@@ -196,7 +197,6 @@ contains
         call json%info('', n_children=size)
         call json%get_core(jsonc)
         call json%get('', list_p, found)  
-        
         do iCC=1 , size
             call jsonc%get_child(list_p, iCC, capa_p, found)
             call jsonc%get_child(capa_p, 'id_capa', attribute_p, found=found)
@@ -233,7 +233,7 @@ contains
             end do
                   
         end do
-        call treeABB%graph("CapasABB")
+        call treeABB%graph("ABBgraph")
         !call matrixD%create_dot()
 
     end subroutine
