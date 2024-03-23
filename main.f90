@@ -2,10 +2,14 @@ program main
     !use btreeds
     use matrix_m
     use abb_m
+    use AVL_Tree_M
+    use circleList
     implicit none
     
     type(abb) :: treeABB
     type(matrix_t) :: matrixD
+    type(Tree_t) :: treeAVL
+    type(circle_list) :: listAlbums
     integer :: choice = 0
     do while (choice /= 3)
          
@@ -127,11 +131,13 @@ contains
         call json%info('', n_children=size) 
         call json%get_core(jsonc)
         call json%get('', list_p, found)
+        call treeAVL%newTree()
         do iJ=1 , size
             call jsonc%get_child(list_p, iJ, imagen_p, found)
             call jsonc%get_child(imagen_p, 'id', attribute_p, found=found)
             if(found) call jsonc%get(attribute_p, idimg)
             print *, "ID Imagen: ", idimg
+            call treeAVL%insert(idimg)
             call jsonc%get_parent(capas_array_p,attribute_p)
             call jsonc%get_child(imagen_p, 'capas', capas_array_p, found=found)
             call jsonc%info(capas_array_p, n_children=capas_size)
@@ -139,10 +145,11 @@ contains
                 call jsonc%get_child(capas_array_p, iCapa, attribute_p, found)
                 if(found) call jsonc%get(attribute_p, idimg)
                 print *, "ID Capa: ", idimg
-                
+
             end do
 
         end do
+        call treeAVL%generateGraph()
         call json%destroy()
     end subroutine
 
@@ -166,15 +173,19 @@ contains
             call jsonc%get_child(list_p, iJ, album_p, found)
             call jsonc%get_child(album_p, 'nombre_album', nombre_p, found=found)
             if(found) call jsonc%get(nombre_p, nombre_album)
-            print *, "Nombre Album: ", trim(nombre_album)
+            print *, "Nombre Album: ", trim(nombre_album) 
+            
             call jsonc%get_child(album_p, 'imgs', imags_array_p, found=found)
             call jsonc%info(imags_array_p, n_children=imags_size)
             do iImg=1 , imags_size
                 call jsonc%get_child(imags_array_p, iImg, imagen_p, found)
                 if(found) call jsonc%get(imagen_p, idimg)
                 print *, "ID Imagen: ", idimg
+                call listAlbums%addF(nombre_album, idimg)
             end do
         end do    
+        call listAlbums%print()
+        call listAlbums%print_dot("AlbumesGraph.dot")
     end subroutine
 
  

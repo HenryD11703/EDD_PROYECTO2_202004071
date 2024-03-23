@@ -15,6 +15,9 @@
           "Estructuras/sMatrix/Matrix.f90",
           "Estructuras/sMatrix/Types.f90",
           "Estructuras/arbolBB/Abb.f90",
+          "Estructuras/AVL/avl.f90",
+          "Estructuras/AlbumesLL/AlbumesList.f90",
+          "Estructuras/AlbumesLL/ImagenesList.f90",
           "./lib/libjsonfortran.a"
         ],
         "options": {  // Working directory
