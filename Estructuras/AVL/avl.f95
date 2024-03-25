@@ -10,7 +10,7 @@ module AVL_Tree_M
     type Node_tAVL
         integer :: Value
         integer :: Factor
-        type(abbVL), pointer :: abbTree => null()
+        type(abbVL) :: NodoABB
         type(Node_tAVL), pointer :: Left => null()
         type(Node_tAVL), pointer :: Right => null()
     end type Node_tAVL
@@ -21,36 +21,23 @@ module AVL_Tree_M
         procedure :: newTree
         procedure :: insert
         procedure :: generateGraph
-        procedure :: insertInAbbOfAVLNode
-        procedure :: searchInAbbOfAvlNode
+        procedure :: insertABBinAVL
     end type Tree_t
   
     contains
   
-    subroutine insertInAbbOfAvlNode(self,avlNode, abbValue, pixels)
-        class(Tree_t), intent(in) :: self
-        type(Node_tAVL), pointer, intent(inout) :: avlNode
-        integer, intent(in) :: abbValue
-        type(pixelVL), dimension(:), intent(inout) :: pixels
-    
-        if (.not. associated(avlNode%abbTree)) then
-            allocate(avlNode%abbTree)
-        end if
-        call avlNode%abbTree%insert(abbValue, pixels)
-    end subroutine insertInAbbOfAvlNode
+    !subrutina avl, abb
+    subroutine insertABBinAVL(this, AVLvalue, ABBvalue,pixels)
+        class(Tree_t), intent(inout) :: this
+        integer, intent(in) :: AVLvalue
+        integer, intent(in) :: ABBvalue
+        type(pixelVL), dimension(:),intent(inout) :: pixels
+        !aca buscar ese avlvalue en el arbol avl
+        !si no existe, no hacer nada
+        !si existe insertar en ese AVLvalue el ABBvalue y los pixeles que son un arreglo de pixelVL
+     
+    end subroutine insertABBinAVL
 
-    function searchInAbbOfAvlNode(self,avlNode, abbValue) result(pixels)
-        type(Node_tAVL), pointer, intent(in) :: avlNode
-        integer, intent(in) :: abbValue
-        class(Tree_t), intent(in) :: self
-        type(pixelVL), dimension(:), allocatable :: pixels
-    
-        if (associated(avlNode%abbTree)) then
-            pixels = avlNode%abbTree%getPixelsById(abbValue)
-        else
-            write(*, *) "No se encontro el nodo con el id ", abbValue
-        end if
-    end function searchInAbbOfAvlNode
 
     function NewNode(value) result(nodePtr)
       type(Node_tAVL), pointer :: nodePtr

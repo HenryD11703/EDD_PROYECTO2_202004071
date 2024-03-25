@@ -170,6 +170,7 @@ contains
                     !ya tener la informacion de la imagen y poder crearla, pero esto mismo se puede hacer con las capas
                     !ya que tendra la opcion de crear imagen, al añadir las capas a usar :O
                      !call matrixD%add(pixelsI(iPixel)%Fila, pixelsI(iPixel)%Columna, pixelsI(iPixel)%Color)
+                    call treeAVL%
                 end do
             end do
             !call matrixD%create_dot(trim(contadorImg))
