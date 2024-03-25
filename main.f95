@@ -169,10 +169,10 @@ contains
                     !entonces en el avl se guarda la imagen, y con sus respectivas capas para luego hacer este getPixelsById otra vez y asi 
                     !ya tener la informacion de la imagen y poder crearla, pero esto mismo se puede hacer con las capas
                     !ya que tendra la opcion de crear imagen, al añadir las capas a usar :O
-                     call matrixD%add(pixelsI(iPixel)%Fila, pixelsI(iPixel)%Columna, pixelsI(iPixel)%Color)
+                     !call matrixD%add(pixelsI(iPixel)%Fila, pixelsI(iPixel)%Columna, pixelsI(iPixel)%Color)
                 end do
             end do
-            call matrixD%create_dot(trim(contadorImg))
+            !call matrixD%create_dot(trim(contadorImg))
         end do
         
         call treeAVL%generateGraph()

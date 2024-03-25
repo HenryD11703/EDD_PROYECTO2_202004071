@@ -1,4 +1,5 @@
 module AVL_Tree_M
+    use abbavl
     implicit none
   
     ! Cons
@@ -9,6 +10,7 @@ module AVL_Tree_M
     type Node_tAVL
         integer :: Value
         integer :: Factor
+        type(abbVL), pointer :: abbTree => null()
         type(Node_tAVL), pointer :: Left => null()
         type(Node_tAVL), pointer :: Right => null()
     end type Node_tAVL
@@ -19,10 +21,37 @@ module AVL_Tree_M
         procedure :: newTree
         procedure :: insert
         procedure :: generateGraph
+        procedure :: insertInAbbOfAVLNode
+        procedure :: searchInAbbOfAvlNode
     end type Tree_t
   
     contains
   
+    subroutine insertInAbbOfAvlNode(self,avlNode, abbValue, pixels)
+        class(Tree_t), intent(in) :: self
+        type(Node_tAVL), pointer, intent(inout) :: avlNode
+        integer, intent(in) :: abbValue
+        type(pixelVL), dimension(:), intent(inout) :: pixels
+    
+        if (.not. associated(avlNode%abbTree)) then
+            allocate(avlNode%abbTree)
+        end if
+        call avlNode%abbTree%insert(abbValue, pixels)
+    end subroutine insertInAbbOfAvlNode
+
+    function searchInAbbOfAvlNode(self,avlNode, abbValue) result(pixels)
+        type(Node_tAVL), pointer, intent(in) :: avlNode
+        integer, intent(in) :: abbValue
+        class(Tree_t), intent(in) :: self
+        type(pixelVL), dimension(:), allocatable :: pixels
+    
+        if (associated(avlNode%abbTree)) then
+            pixels = avlNode%abbTree%getPixelsById(abbValue)
+        else
+            write(*, *) "No se encontro el nodo con el id ", abbValue
+        end if
+    end function searchInAbbOfAvlNode
+
     function NewNode(value) result(nodePtr)
       type(Node_tAVL), pointer :: nodePtr
       integer, intent(in) :: value
