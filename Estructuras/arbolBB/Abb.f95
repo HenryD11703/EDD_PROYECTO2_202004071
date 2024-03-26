@@ -25,6 +25,7 @@ module abb_m
         procedure :: insert
         procedure :: delete
         procedure :: preorder
+        procedure :: DatosPreoder
         procedure :: inorder
         procedure :: posorder
         procedure :: graph
@@ -218,12 +219,14 @@ end subroutine printPixelsRec
         end if
     end subroutine getMajorOfMinors
 
+
     subroutine preorder(self)
         class(abb), intent(in) :: self
         
         call preorderRec(self%root)
         write(*, '()')
     end subroutine preorder
+
     recursive subroutine preorderRec(root)
         type(Node_t), pointer, intent(in) :: root
 
@@ -234,6 +237,42 @@ end subroutine printPixelsRec
             call preorderRec(root%right)
         end if
     end subroutine preorderRec
+
+ !ncesito una funcion llamada datospreorder que me devuelva un string con los datos de preorder
+
+     function DatosPreoder(self) result(datos)
+    class(abb), intent(in) :: self
+    character(len=1000) :: datos
+    character(len=10) :: temp
+    integer, allocatable :: array(:)
+    integer :: i
+
+    call DatosPreorderRec(self%root, array)
+
+    datos = ''  ! Initialize the result string
+    do i = 1, size(array)
+        write(temp, '(I0)') array(i)  ! Convert the integer to a string
+        datos = trim(datos) // ',' // trim(temp)  ! Concatenate the strings with a space in between
+    end do
+end function DatosPreoder
+
+recursive subroutine DatosPreorderRec(root, array)
+    type(Node_t), pointer, intent(in) :: root
+    integer, allocatable, intent(inout) :: array(:)
+    integer :: i
+
+    if (associated(root)) then
+        i = size(array) + 1
+        if (allocated(array)) then
+            array = [array, root%value]
+        else
+            allocate(array(1))
+            array(1) = root%value
+        end if
+        call DatosPreorderRec(root%left, array)
+        call DatosPreorderRec(root%right, array)
+    end if
+end subroutine DatosPreorderRec
 
     subroutine inorder(self)
         class(abb), intent(in) :: self
