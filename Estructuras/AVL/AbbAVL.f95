@@ -1,24 +1,14 @@
 module abbavl
- 
     implicit none
     private
 
-
-    
-    type,public :: pixelVL
-        integer :: Fila
-        integer :: Columna
-        character(:), allocatable :: Color !aca se guardara el valor hexadecimal del color por ejemplo #F0F0F0
-    end type pixelVL
-
     type :: Node_tVL
-        integer :: value !el nodo tendra un id que seria el id de la capa y un arreglo de pixeles dinamico
-        type(pixelVL), dimension(:), allocatable :: pixels
+        integer :: value
         type(Node_tVL), pointer :: right => null()
         type(Node_tVL), pointer :: left => null()
     end type Node_tVL
 
-    type, public :: abbVL
+    type, public :: abb_avl
         type(Node_tVL), pointer :: root => null()
 
     contains
@@ -28,148 +18,44 @@ module abbavl
         procedure :: inorder
         procedure :: posorder
         procedure :: graph
-        procedure :: printPixels
-        procedure :: printPixelsById
-        procedure :: getPixelsById
-        procedure :: getPixelSizeByID
-    end type abbVL
+    end type abb_avl
 
 contains    
-
-subroutine printPixelsById(self, id)
-    class(abbVL), intent(in) :: self
-    integer, intent(in) :: id
-    type(Node_tVL), pointer :: node
-    
-    node => searchNodeRec(self%root, id)
-    if (associated(node)) then
-        call printPixelsOfNode(node)
-    else
-        write(*, *) "No se encontro el nodo con el id ", id
-    end if
-end subroutine printPixelsById
-
-recursive function searchNodeRec(root, id) result(res)
-    type(Node_tVL), pointer , intent(in) :: root
-    integer, intent(in) :: id
-    type(Node_tVL), pointer :: res
-    if(.not. associated(root)) then
-        res => null()
-    else if (id == root%value) then
-        res => root
-    else if (id < root%value) then
-        res => searchNodeRec(root%left, id)
-    else
-        res => searchNodeRec(root%right, id)
-    end if
-end function searchNodeRec
-
-subroutine printPixelsOfNode(node)
-    type(Node_tVL), pointer, intent(in) :: node
-    integer :: i
-
-    !Aca ir añadiendo esto a la matriz dispersa dadas las capas
-
-    if (associated(node)) then
-        write(*, *) "Node value: ", node%value
-        do i = 1, size(node%pixels)
-            write(*, *) "Pixel ", i, ": Fila ", node%pixels(i)%Fila,&
-             ", Columna ", node%pixels(i)%Columna, ", Color ", node%pixels(i)%Color
-        end do
-    end if
-end subroutine printPixelsOfNode
-
-subroutine printPixels(self)
-    class(abbVL), intent(in) :: self
-    call printPixelsRec(self%root)
-end subroutine printPixels
-
-recursive subroutine printPixelsRec(root)
-    type(Node_tVL), pointer, intent(in) :: root
-    integer :: i
-
-    if (associated(root)) then
-        write(*, *) "Node value: ", root%value
-        do i = 1, size(root%pixels)
-            write(*, *) "Pixel ", i, ": Fila ", root%pixels(i)%Fila,&
-             ", Columna ", root%pixels(i)%Columna, ", Color ", root%pixels(i)%Color
-        end do
-        call printPixelsRec(root%left)
-        call printPixelsRec(root%right)
-    end if
-end subroutine printPixelsRec
-    !Subrutinas del tipo abbVL
-    subroutine insert(self, val,pixels)
-        class(abbVL), intent(inout) :: self
-        type(pixelVL), dimension(:), intent(inout) :: pixels
+    !Subrutinas del tipo abb_avl
+    subroutine insert(self, val)
+        class(abb_avl), intent(inout) :: self
         integer, intent(in) :: val
 
         if (.not. associated(self%root)) then
             allocate(self%root)
             self%root%value = val
-            if (allocated(self%root%pixels)) deallocate(self%root%pixels)
-            allocate(self%root%pixels(size(pixels)))
-            self%root%pixels = pixels
         else
-            call insertRec(self%root, val,pixels)
+            call insertRec(self%root, val)
         end if
     end subroutine insert
-
-    function getPixelsById(self, id) result(pixels)
-        class(abbVL), intent(in) :: self
-        integer, intent(in) :: id
-        type(Node_tVL), pointer :: node
-        type(pixelVL), dimension(:), allocatable :: pixels
-    
-        node => searchNodeRec(self%root, id)
-        if (associated(node)) then
-            pixels = node%pixels
-        else
-            write(*, *) "No se encontro el nodo con el id ", id
-        end if
-    end function getPixelsById
-
-    function getPixelSizeByID(self, id) result(sizeD)
-        class(abbVL), intent(in) :: self
-        integer, intent(in) :: id
-        type(Node_tVL), pointer :: node
-        integer :: sizeD
-    
-        node => searchNodeRec(self%root, id)
-        if (associated(node)) then
-            sizeD = size(node%pixels)
-        else
-            write(*, *) "No se encontro el nodo con el id ", id
-            sizeD = -1
-        end if
-    end function getPixelSizeByID
-
-    recursive subroutine insertRec(root, val,pixels)
+    recursive subroutine insertRec(root, val)
         type(Node_tVL), pointer, intent(inout) :: root
-        type(pixelVL), dimension(:), intent(inout) :: pixels
         integer, intent(in) :: val
         
         if (val < root%value) then
             if (.not. associated(root%left)) then
                 allocate(root%left)
                 root%left%value = val
-                root%left%pixels = pixels
             else
-                call insertRec(root%left, val,pixels)
+                call insertRec(root%left, val)
             end if
         else if (val > root%value) then
             if (.not. associated(root%right)) then
                 allocate(root%right)
                 root%right%value = val
-                root%right%pixels = pixels
             else
-                call insertRec(root%right, val,pixels)
+                call insertRec(root%right, val)
             end if
         end if
     end subroutine insertRec
 
     subroutine delete(self, val)
-        class(abbVL), intent(inout) :: self
+        class(abb_avl), intent(inout) :: self
         integer, intent(inout) :: val
     
         self%root => deleteRec(self%root, val)
@@ -219,7 +105,7 @@ end subroutine printPixelsRec
     end subroutine getMajorOfMinors
 
     subroutine preorder(self)
-        class(abbVL), intent(in) :: self
+        class(abb_avl), intent(in) :: self
         
         call preorderRec(self%root)
         write(*, '()')
@@ -236,7 +122,7 @@ end subroutine printPixelsRec
     end subroutine preorderRec
 
     subroutine inorder(self)
-        class(abbVL), intent(in) :: self
+        class(abb_avl), intent(in) :: self
         
         call inordenRec(self%root)
         print *, ""
@@ -253,7 +139,7 @@ end subroutine printPixelsRec
     end subroutine inordenRec
 
     subroutine posorder(self)
-        class(abbVL), intent(in) :: self
+        class(abb_avl), intent(in) :: self
         
         call posordenRec(self%root)
         print *, ""
@@ -270,7 +156,7 @@ end subroutine printPixelsRec
     end subroutine posordenRec
 
     subroutine graph(self, filename)
-        class(abbVL), intent(in) :: self
+        class(abb_avl), intent(in) :: self
         character(len=*), intent(in) :: filename
         character(len=:), allocatable :: dotStructure
         character(len=:), allocatable :: createNodes
@@ -329,11 +215,12 @@ end subroutine printPixelsRec
         dot_filename = trim(filename) // ".dot"
         png_filename = trim(filename) // ".png"
         
-        open(10, file=dot_filename, status='replace', action='write')
+        open(10, file="graph/"//dot_filename, status='replace', action='write')
         write(10, '(A)') trim(code)
         close(10)
 
- 
+        ! Genera la imagen PNG
+        call system("dot -Tpng graph/"// dot_filename //" -o graph/" // png_filename)
     end subroutine write_dot
 
     function get_address_memory(node) result(address)

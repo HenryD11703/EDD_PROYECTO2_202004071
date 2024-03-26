@@ -158,41 +158,12 @@ contains
                 print *, "ID Capa: ", idimg
                 !call treeABB%printPixelsById(idimg)
                 !aca con el id de la capa, buscar en el arbol de capas y obtener los pixeles de esa capa para crear la imagen
-                pixelsI = treeABB%getPixelsById(idimg)
+                !pixelsI = treeABB%getPixelsById(idimg)
                 !recorrer este arreglo de pixeles y añadirlo al otro arreglo de pixelesV
                 
 
                  
-                do iPixel = 1, treeABB%getPixelSizeById(idimg)
-                   ! print *, "Fila: ", pixelsI(iPixel)%Fila, " Columna: ",&
-                   !  pixelsI(iPixel)%Columna, " Color: ", pixelsI(iPixel)%Color
-                     !error en esto por el allocatable de pixelsI
-                     !Hoy ya no da error JAJAJA, ahi se va 
-
-                   !Segun el enunciado aca no se debe de hacer la imgaen sino que aca nada mas se guarda la informacion de la imagen
-                    ! y luego en el apartado de creacion de imagen se permite por medio del id de la imagen crear la imagen
-                    !entonces en el avl se guarda la imagen, y con sus respectivas capas para luego hacer este getPixelsById otra vez y asi 
-                    !ya tener la informacion de la imagen y poder crearla, pero esto mismo se puede hacer con las capas
-                    !ya que tendra la opcion de crear imagen, al añadir las capas a usar :O
-                     !call matrixD%add(pixelsI(iPixel)%Fila, pixelsI(iPixel)%Columna, pixelsI(iPixel)%Color)
-                    allocate(pixelsVL(treeABB%getPixelSizeById(idimg)))
-                    pixelsVL(iPixel)%Fila = pixelsI(iPixel)%Fila
-                    pixelsVL(iPixel)%Columna = pixelsI(iPixel)%Columna
-                    pixelsVL(iPixel)%Color = pixelsI(iPixel)%Color
- !aca guardar mejor unicamente el id de la capa y ya luego cuando necesite llamo al abb para obtener los pixeles de esa capa
-                    !y asi no me complico con los pixeles de las capas en el abb del avl
-                    call treeAVL%insertABBinAVL(idImagenFijo,idimg,pixelsVL)
-                    !limpiar el arreglo de pixeles
-                    if (allocated(pixelsVL)) then
-                        print *, "Fila: ", pixelsVL(iPixel)%Fila, " Columna: ",&
-                    pixelsVL(iPixel)%Columna, " Color: ", pixelsVL(iPixel)%Color
-                        deallocate(pixelsVL)
-                    end if
-           
-                    !call treeAVL%printAVL_ABB_fromAVLID(8)
-                    ! call treeAVL%root%NodoABB%printPixels()
-
-                end do
+                 
             end do
             !call matrixD%create_dot(trim(contadorImg))
         end do
