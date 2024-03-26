@@ -20,6 +20,10 @@
           "Estructuras/AlbumesLL/AlbumesList.f95",
           "./lib/libjsonfortran.a"
         ],
+        "icon": {
+          "dark": "./images/compile-dark.svg",
+          "light": "./images/compile-light.svg"
+        },
         "options": {  // Working directory
           "cwd": "${workspaceFolder}"
         }

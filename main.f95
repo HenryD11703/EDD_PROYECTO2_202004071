@@ -121,11 +121,13 @@ contains
     
         type(pixel), dimension(:), allocatable :: pixelsI
         type(pixel) :: pixel_tmpI
+        type(pixelVL),dimension(:),allocatable :: pixelsVL
+        type(pixelVL) :: pixel_tmpVL
         type(json_file) :: json
         type(json_value), pointer :: list_p, attribute_p, imagen_p, capas_array_p
         type(json_core) :: jsonc
         integer :: idimg,capas_size, iPixel
-        integer :: size,iJ, iCapa,RESULT
+        integer :: size,iJ, iCapa,idImagenFijo
         logical :: found
         character(len=10) :: contadorImg
         character(len=20), intent(in) :: username
@@ -142,7 +144,7 @@ contains
             call jsonc%get_child(imagen_p, 'id', attribute_p, found=found)
             if(found) call jsonc%get(attribute_p, idimg)
             print *, "ID Imagen: ", idimg
-      
+            idImagenFijo = idimg
             write(contadorImg, '(I10)') idimg
             
             call matrixD%init()
@@ -157,6 +159,9 @@ contains
                 !call treeABB%printPixelsById(idimg)
                 !aca con el id de la capa, buscar en el arbol de capas y obtener los pixeles de esa capa para crear la imagen
                 pixelsI = treeABB%getPixelsById(idimg)
+                !recorrer este arreglo de pixeles y añadirlo al otro arreglo de pixelesV
+                
+
                  
                 do iPixel = 1, treeABB%getPixelSizeById(idimg)
                    ! print *, "Fila: ", pixelsI(iPixel)%Fila, " Columna: ",&
@@ -170,7 +175,23 @@ contains
                     !ya tener la informacion de la imagen y poder crearla, pero esto mismo se puede hacer con las capas
                     !ya que tendra la opcion de crear imagen, al añadir las capas a usar :O
                      !call matrixD%add(pixelsI(iPixel)%Fila, pixelsI(iPixel)%Columna, pixelsI(iPixel)%Color)
-                    call treeAVL%
+                    allocate(pixelsVL(treeABB%getPixelSizeById(idimg)))
+                    pixelsVL(iPixel)%Fila = pixelsI(iPixel)%Fila
+                    pixelsVL(iPixel)%Columna = pixelsI(iPixel)%Columna
+                    pixelsVL(iPixel)%Color = pixelsI(iPixel)%Color
+ !aca guardar mejor unicamente el id de la capa y ya luego cuando necesite llamo al abb para obtener los pixeles de esa capa
+                    !y asi no me complico con los pixeles de las capas en el abb del avl
+                    call treeAVL%insertABBinAVL(idImagenFijo,idimg,pixelsVL)
+                    !limpiar el arreglo de pixeles
+                    if (allocated(pixelsVL)) then
+                        print *, "Fila: ", pixelsVL(iPixel)%Fila, " Columna: ",&
+                    pixelsVL(iPixel)%Columna, " Color: ", pixelsVL(iPixel)%Color
+                        deallocate(pixelsVL)
+                    end if
+           
+                    !call treeAVL%printAVL_ABB_fromAVLID(8)
+                    ! call treeAVL%root%NodoABB%printPixels()
+
                 end do
             end do
             !call matrixD%create_dot(trim(contadorImg))

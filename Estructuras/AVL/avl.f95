@@ -22,22 +22,45 @@ module AVL_Tree_M
         procedure :: insert
         procedure :: generateGraph
         procedure :: insertABBinAVL
+        procedure :: printAVL_ABB
+       ! procedure :: printAVL_ABB_fromAVLID
     end type Tree_t
   
     contains
+
+     
+
+    subroutine printAVL_ABB(this)
+        class(Tree_t), intent(inout) :: this
+        if(.not. associated(this%root)) then
+            print *, "Arbol AVL vacio"
+        else
+            call this%root%NodoABB%printPixels()
+        end if
+    end subroutine printAVL_ABB
   
     !subrutina avl, abb
-    subroutine insertABBinAVL(this, AVLvalue, ABBvalue,pixels)
+    subroutine insertABBinAVL(this, AVLvalue, ABBvalue, pixels)
         class(Tree_t), intent(inout) :: this
         integer, intent(in) :: AVLvalue
         integer, intent(in) :: ABBvalue
-        type(pixelVL), dimension(:),intent(inout) :: pixels
-        !aca buscar ese avlvalue en el arbol avl
-        !si no existe, no hacer nada
-        !si existe insertar en ese AVLvalue el ABBvalue y los pixeles que son un arreglo de pixelVL
-     
+        type(pixelVL), dimension(:), intent(inout) :: pixels
+    
+        type(Node_tAVL), pointer :: currentNode
+    
+        currentNode => this%root
+    
+        do while (associated(currentNode))
+            if (AVLvalue == currentNode%Value) then
+                call currentNode%NodoABB%insert(ABBvalue, pixels)
+                exit
+            else if (AVLvalue < currentNode%Value) then
+                currentNode => currentNode%Left
+            else
+                currentNode => currentNode%Right
+            end if
+        end do
     end subroutine insertABBinAVL
-
 
     function NewNode(value) result(nodePtr)
       type(Node_tAVL), pointer :: nodePtr
