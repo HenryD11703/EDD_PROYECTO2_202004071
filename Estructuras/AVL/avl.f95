@@ -1,4 +1,4 @@
-module AVL_Tree_M
+module TreeAVL_M
     use abbavl
     implicit none
   
@@ -10,7 +10,7 @@ module AVL_Tree_M
     type Node_tAVL
         integer :: Value
         integer :: Factor
-        type(abb_AVL) :: NodoABB
+        type(NodoABB) :: NodoABB
         type(Node_tAVL), pointer :: Left => null()
         type(Node_tAVL), pointer :: Right => null()
     end type Node_tAVL
@@ -21,15 +21,59 @@ module AVL_Tree_M
         procedure :: newTree
         procedure :: insert
         procedure :: generateGraph
-    
- 
+        procedure :: insertIntoABB
+        procedure :: printAVLandABB
+
     end type Tree_t
   
     contains
 
-     
- 
- 
+    subroutine printAVLandABB(self)
+        class(Tree_t), intent(inout) :: self
+    
+        call printAVLandABBRec(self%root)
+    end subroutine printAVLandABB
+    
+    recursive subroutine printAVLandABBRec(node)
+        type(Node_tAVL), pointer :: node
+    
+        if (associated(node)) then
+            print *, "AVL Node: ", node%Value
+            print *, "ABB in AVL Node: "
+            call node%NodoABB%inorder()
+            call printAVLandABBRec(node%Left)
+            call printAVLandABBRec(node%Right)
+        end if
+    end subroutine printAVLandABBRec
+
+    subroutine insertIntoABB(self, avlValue, abbValue)
+        class(Tree_t), intent(inout) :: self
+        integer, intent(in) :: avlValue, abbValue
+        type(Node_tAVL), pointer :: avlNode
+    
+        avlNode => findAVLNode(self%root, avlValue)
+    
+        if (associated(avlNode)) then
+            call avlNode%NodoABB%insert(abbValue)
+        else
+            print *, "AVL node not found."
+        end if
+    end subroutine insertIntoABB
+    
+    recursive function findAVLNode(root, value) result(node)
+        type(Node_tAVL), pointer :: root, node
+        integer, intent(in) :: value
+    
+        if (.not. associated(root)) then
+            node => null()
+        else if (value == root%Value) then
+            node => root
+        else if (value < root%Value) then
+            node => findAVLNode(root%Left, value)
+        else
+            node => findAVLNode(root%Right, value)
+        end if
+    end function findAVLNode
 
     function NewNode(value) result(nodePtr)
       type(Node_tAVL), pointer :: nodePtr
@@ -260,4 +304,4 @@ module AVL_Tree_M
       !call system("dot -Tpng graphAVL.dot -o grafo.png")
     end subroutine write_dot
   
-  end module AVL_Tree_M
+  end module TreeAVL_M

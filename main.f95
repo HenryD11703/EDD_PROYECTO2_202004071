@@ -2,7 +2,7 @@ program main
  
     use matrix_m
     use abb_m
-    use AVL_Tree_M
+    use TreeAVL_M
     use List_of_lists_m
     implicit none
     
@@ -121,8 +121,8 @@ contains
     
         type(pixel), dimension(:), allocatable :: pixelsI
         type(pixel) :: pixel_tmpI
-        type(pixelVL),dimension(:),allocatable :: pixelsVL
-        type(pixelVL) :: pixel_tmpVL
+  
+   
         type(json_file) :: json
         type(json_value), pointer :: list_p, attribute_p, imagen_p, capas_array_p
         type(json_core) :: jsonc
@@ -161,13 +161,14 @@ contains
                 !pixelsI = treeABB%getPixelsById(idimg)
                 !recorrer este arreglo de pixeles y añadirlo al otro arreglo de pixelesV
                 
-
+                call treeAVL%insertIntoABB(idImagenFijo,idimg)
                  
                  
             end do
             !call matrixD%create_dot(trim(contadorImg))
+            
         end do
-        
+        call treeAVL%printAVLandABB()
         call treeAVL%generateGraph()
         call json%destroy()
     end subroutine

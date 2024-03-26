@@ -2,14 +2,14 @@ module abbavl
     implicit none
     private
 
-    type :: Node_tVL
+    type :: Node_tABB
         integer :: value
-        type(Node_tVL), pointer :: right => null()
-        type(Node_tVL), pointer :: left => null()
-    end type Node_tVL
+        type(Node_tABB), pointer :: right => null()
+        type(Node_tABB), pointer :: left => null()
+    end type Node_tABB
 
-    type, public :: abb_avl
-        type(Node_tVL), pointer :: root => null()
+    type, public :: NODOABB
+        type(Node_tABB), pointer :: root => null()
 
     contains
         procedure :: insert
@@ -18,12 +18,15 @@ module abbavl
         procedure :: inorder
         procedure :: posorder
         procedure :: graph
-    end type abb_avl
+    end type NODOABB
 
 contains    
-    !Subrutinas del tipo abb_avl
+
+
+    
+    !Subrutinas del tipo NODOABB
     subroutine insert(self, val)
-        class(abb_avl), intent(inout) :: self
+        class(NODOABB), intent(inout) :: self
         integer, intent(in) :: val
 
         if (.not. associated(self%root)) then
@@ -34,7 +37,7 @@ contains
         end if
     end subroutine insert
     recursive subroutine insertRec(root, val)
-        type(Node_tVL), pointer, intent(inout) :: root
+        type(Node_tABB), pointer, intent(inout) :: root
         integer, intent(in) :: val
         
         if (val < root%value) then
@@ -55,16 +58,16 @@ contains
     end subroutine insertRec
 
     subroutine delete(self, val)
-        class(abb_avl), intent(inout) :: self
+        class(NODOABB), intent(inout) :: self
         integer, intent(inout) :: val
     
         self%root => deleteRec(self%root, val)
     end subroutine delete
     recursive function deleteRec(root, value) result(res)
-        type(Node_tVL), pointer :: root
+        type(Node_tABB), pointer :: root
         integer, intent(in) :: value
-        type(Node_tVL), pointer :: res
-        type(Node_tVL), pointer :: temp
+        type(Node_tABB), pointer :: res
+        type(Node_tABB), pointer :: temp
 
         if (.not. associated(root)) then
             res => root
@@ -96,7 +99,7 @@ contains
         res => root
     end function deleteRec
     recursive subroutine getMajorOfMinors(root, major)
-        type(Node_tVL), pointer :: root, major
+        type(Node_tABB), pointer :: root, major
         if (associated(root%right)) then
             call getMajorOfMinors(root%right, major)
         else
@@ -105,13 +108,13 @@ contains
     end subroutine getMajorOfMinors
 
     subroutine preorder(self)
-        class(abb_avl), intent(in) :: self
+        class(NODOABB), intent(in) :: self
         
         call preorderRec(self%root)
         write(*, '()')
     end subroutine preorder
     recursive subroutine preorderRec(root)
-        type(Node_tVL), pointer, intent(in) :: root
+        type(Node_tABB), pointer, intent(in) :: root
 
         if(associated(root)) then
             ! RAIZ - IZQ - DER
@@ -122,13 +125,13 @@ contains
     end subroutine preorderRec
 
     subroutine inorder(self)
-        class(abb_avl), intent(in) :: self
+        class(NODOABB), intent(in) :: self
         
         call inordenRec(self%root)
         print *, ""
     end subroutine inorder
     recursive subroutine inordenRec(root)
-        type(Node_tVL), pointer, intent(in) :: root
+        type(Node_tABB), pointer, intent(in) :: root
 
         if(associated(root)) then
             ! IZQ - RAIZ - DER
@@ -139,13 +142,13 @@ contains
     end subroutine inordenRec
 
     subroutine posorder(self)
-        class(abb_avl), intent(in) :: self
+        class(NODOABB), intent(in) :: self
         
         call posordenRec(self%root)
         print *, ""
     end subroutine posorder
     recursive subroutine posordenRec(root)
-        type(Node_tVL), pointer, intent(in) :: root
+        type(Node_tABB), pointer, intent(in) :: root
 
         if(associated(root)) then
             ! IZQ - DER - RAIZ
@@ -156,7 +159,7 @@ contains
     end subroutine posordenRec
 
     subroutine graph(self, filename)
-        class(abb_avl), intent(in) :: self
+        class(NODOABB), intent(in) :: self
         character(len=*), intent(in) :: filename
         character(len=:), allocatable :: dotStructure
         character(len=:), allocatable :: createNodes
@@ -177,7 +180,7 @@ contains
         print *, "Archivo actualizado existosamente."
     end subroutine graph
     recursive subroutine RoamTree(current, createNodes, linkNodes)
-        type(Node_tVL), pointer :: current
+        type(Node_tABB), pointer :: current
         character(len=:), allocatable, intent(inout) :: createNodes, linkNodes
         character(len=20) :: address, str_value
 
@@ -225,7 +228,7 @@ contains
 
     function get_address_memory(node) result(address)
         !class(matrix_t), intent(in) :: self
-        type(Node_tVL), pointer :: node
+        type(Node_tABB), pointer :: node
         character(len=20) :: address
         ! integer 8
         integer*8 :: i
