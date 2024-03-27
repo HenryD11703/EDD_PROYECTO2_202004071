@@ -219,7 +219,7 @@ contains
       integer :: id_capa, iP, fila, columna
       character(:), allocatable :: color
       integer :: size, iJ, size2, iCC
-      logical :: found, insert
+      logical :: found
       type(pixel), dimension(:), allocatable :: pixels
       type(pixel) :: pixel_tmp
 
@@ -235,8 +235,8 @@ contains
          if (found) call jsonc%get(attribute_p, id_capa)
          call jsonc%get_child(capa_p, 'pixeles', pixeles_p, found=found)
          call jsonc%info(pixeles_p, n_children=size2)
-         print *, "ID Capa: ", id_capa
-         print *, "Pixeles: ", size2
+         !print *, "ID Capa: ", id_capa
+         !print *, "Pixeles: ", size2
          !añadir el id_capa al arbol binario de busqueda
          allocate (pixels(size2))
          !por cada pixel recorrer sus atributos de fila, columna y color
@@ -262,7 +262,7 @@ contains
             !las capas las tengo que guardar por el id en el arbol binario de busqueda (ABB)
             pixel_tmp = pixel(fila, columna, color)
             pixels(iP) = pixel_tmp
-            print *, "Fila: ", fila, " Columna: ", columna, " Color: ", color
+            !print *, "Fila: ", fila, " Columna: ", columna, " Color: ", color
          end do
          call treeABB%insert(id_capa, pixels)
          deallocate (pixels)
@@ -330,87 +330,126 @@ contains
 
    subroutine generate_image_by_limitedTraversal(username)
       character(len=20), intent(in) :: username
-      integer :: idImagen, iPre, cantidadCapas, iPixelPre, filaP, columnaP
-      integer, dimension(:), allocatable :: datosA
-      character(:), allocatable :: datos
-      type(pixel), dimension(:), allocatable :: pixelsI
+      integer :: idImagen, iPre = 0, cantidadCapas, iPixelPre, iPre1
+      integer, dimension(:), allocatable :: datosA, datosIn 
+      character(:), allocatable :: datos,datosInorder, datosPos
+      type(pixel), dimension(:), allocatable :: pixelsI, pixelsI2
 
-      print *, "USUARIO: ", username
-      print *, "Ingrese que recorrido desea hacer:"
-      print *, "1. Preorden"
-      print *, "2. Inorden"
-      print *, "3. Postorden"
-      read *, idImagen
-      print *, "Ingrese la cantidad de capas a utilizar:"
-      read *, cantidadCapas
-      select case (idImagen)
-      case (1)
-         call treeABB%preorder()
-         datos =  treeABB%DatosPreoder()
-         datos = datos(2:)
-        print *, "Datos: ", datos
+      do while (iPre /= 4)
+         print *, "USUARIO: ", username
+         print *, "Ingrese que recorrido desea hacer:"
+         print *, "1. Preorden"
+         print *, "2. Inorden"
+         print *, "3. Postorden"
+         print *, "4. Salir"
+         print *, "Seleccione una opcion:"
+         read *, idImagen
+         print *, "Ingrese la cantidad de capas a utilizar:"
+         read *, cantidadCapas
+         select case (idImagen)
+         case (1)
+            call treeABB%preorder()
+            datos = treeABB%DatosPreoder()
+            datos = datos(2:)
+            !print *, "Datos: ", datos
             datosA = DatosCapas(datos)
             !do iPre = 1, size(datosA)
-              ! print *, datosA(iPre)
+            ! print *, datosA(iPre)
             !end do
-               
-            
-         call matrixD%init()
-         do iPre = 1, cantidadCapas
-
-            print *, datosA(iPre)
-            !Buscar los ids de estas capas y obtener los pixeles de estos en un arreglo de pixeles
-            !Luego mandar a llamar la funcion para crear la imagen
-            pixelsI = treeABB%getPixelsById(datosA(iPre))
-
-            do iPixelPre = 1, size(pixelsI)
-             ! print *, "Fila: ", pixelsI(iPixelPre)%Fila, " Columna: ", pixelsI(iPixelPre)%Columna, &
-              !  " Color: ", pixelsI(iPixelPre)%color
-                call matrixD%add(pixelsI(iPixelPre)%Fila, pixelsI(iPixelPre)%Columna, pixelsI(iPixelPre)%color)
+            call matrixD%init()
+            do iPre = 1, cantidadCapas
+               print *, datosA(iPre)
+               !Buscar los ids de estas capas y obtener los pixeles de estos en un arreglo de pixeles
+               !Luego mandar a llamar la funcion para crear la imagen
+               pixelsI = treeABB%getPixelsById(datosA(iPre))
+               do iPixelPre = 1, size(pixelsI)
+                  ! print *, "Fila: ", pixelsI(iPixelPre)%Fila, " Columna: ", pixelsI(iPixelPre)%Columna, &
+                  !  " Color: ", pixelsI(iPixelPre)%color
+                  call matrixD%add(pixelsI(iPixelPre)%Fila, pixelsI(iPixelPre)%Columna, pixelsI(iPixelPre)%color)
+               end do
             end do
+          call matrixD%create_dot("ImagenPreorden")
+         case (2)
+            call matrixD%init()
+            call treeABB%inorder()
+            datosInorder = treeABB%DatosInorder()       
+            datosInorder = datosInorder(2:)
+            datosA = DatosCapas(datosInorder)
+            do iPre1=1, cantidadCapas
+                print *, datosA(iPre1)
+                pixelsI2 = treeABB%getPixelsById(datosA(iPre1))
+                do iPixelPre = 1, size(pixelsI2)
+                  ! print *, "Fila: ", pixelsI2(iPixelPre)%Fila, " Columna: ", pixelsI2(iPixelPre)%Columna, &
+                  !  " Color: ", pixelsI2(iPixelPre)%color
+                  call matrixD%add(pixelsI2(iPixelPre)%Fila, pixelsI2(iPixelPre)%Columna, pixelsI2(iPixelPre)%color)
+                end do!FUNCIONA TODO SOLO QUE NO EJECUTAR CON EL DEBUGGER, POR QUE SE BUGEA AL CREAR EL DOT POR EL COMANDO, ENTONCES EJECUTARLO DIRECTAMENTE EL MAIN.EXE CON POWERSHELL
 
-         end do
-         call matrixD%create_dot("ImagenPreorden")
-      case (2)
-         call treeABB%inorder()
-      case (3)
-         call treeABB%posorder()
-      case default
-         print *, "Opcion Invalida."
-      end select
+            end do
+            
+         call matrixD%create_dot("ImagenInorden")
+         case (3)
+            call matrixD%init()
+            call treeABB%posorder()
+            datosPos = treeABB%posorderData()
+            datosPos = datosPos(2:)
+            print *, "Datos: ", datosPos !TODO: Arreglar esta funcion que no lo hace en posOrden correctamente
+            datosA = DatosCapas(datosPos)
+            do iPre1 = 1, cantidadCapas
+               print *, datosA(iPre1)
+               pixelsI2 = treeABB%getPixelsById(datosA(iPre1))
+               do iPixelPre = 1, size(pixelsI2)
+                  call matrixD%add(pixelsI2(iPixelPre)%Fila, pixelsI2(iPixelPre)%Columna, pixelsI2(iPixelPre)%color)
+               end do
+            end do
+            call matrixD%create_dot("ImagenPostorden")
+         case default
+            print *, "Opcion Invalida."
+         end select
+      end do
    end subroutine
 
    function DatosCapas(str) result(datosIDS)
-    character(len=*), intent(in) :: str
-    integer, dimension(:), allocatable :: datosIDS
-    integer :: i, count = 0, startPos = 1, endPos, val
+      implicit none
+      character(len=*) :: str
+      integer, dimension(:), allocatable :: datosIDS
+      character(len=1), dimension(:), allocatable :: strArray
+      integer :: i, n, count
+  
+      count = 0
+      do i = 1, len_trim(str)
+          if (str(i:i) == ',') count = count + 1
+      end do
+  
+      n = count + 1
+      allocate(datosIDS(n))
+      allocate(strArray(n))
+  
+      call split(str, ',', strArray)
+  
+      do i = 1, n
+          read(strArray(i), *) datosIDS(i)
+      end do
+  end function DatosCapas
 
-    ! First, count the number of integers in the string
-    do i = 1, len_trim(str)
-        if (str(i:i) == ",") then
-            count = count + 1
-        end if
-    end do
+  subroutine split(str, delimiter, strArray)
+   implicit none
+   character(len=*), intent(in) :: str, delimiter
+   character(len=1), dimension(:), allocatable, intent(out) :: strArray
+   integer :: i, j, n
 
-    ! Allocate the array
-    allocate(datosIDS(count+1))
+   n = len_trim(str)
+   allocate(strArray(n))
 
-    ! Now extract the integers
-    count = 1
-    do i = 1, len_trim(str)
-        if (str(i:i) == "," .or. i == len_trim(str)) then
-            endPos = i
-            if (i == len_trim(str)) then
-                endPos = endPos + 1
-            end if
-            read(str(startPos:endPos-1), *) val
-            datosIDS(count) = val
-            startPos = i + 1
-            count = count + 1
-        end if
-    end do
-end function DatosCapas
-   
+   j = 1
+   do i = 1, n
+       if (str(i:i) /= delimiter) then
+           strArray(j) = str(i:i)
+           j = j + 1
+       end if
+   end do
+end subroutine split
+  
+
    subroutine admin_menu()
       integer :: choiceA = 0
       do while (choiceA /= 3)
@@ -434,6 +473,8 @@ end function DatosCapas
          end select
       end do
    end subroutine
+
+
 
    subroutine add_user()
       use json_module

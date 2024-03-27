@@ -416,6 +416,7 @@ module matrix_m
     class(matrix_t), intent(in) :: self
     type(matrix_node), pointer :: node
     character(len=100) :: address
+    
     ! integer 8
     integer*8 :: i
 
@@ -427,12 +428,19 @@ module matrix_m
   end function get_address_memory
 
   subroutine write_dot(self, code,filename)
+    integer :: cmdStat
+    character(:), allocatable :: cmd
+    character(len=1024) :: cmdMsg
     class(matrix_t), intent(in) :: self
     character(len=*), intent(in) :: code
     character(len=*), intent(in), optional :: filename
     open(10, file=filename//'.dot', status='replace', action='write')
     write(10, '(A)') trim(code)
     close(10)
-    call execute_command_line('dot -Gnslimit=2 -Tpng '//trim(filename)//'.dot -o '//trim(filename)//'.png')
+    cmd = 'dot -Gnslimit=2 -Tpng '//trim(filename)//'.dot -o '//trim(filename)//'.png'
+    print*, 'Executing command: ', trim(cmd)
+     call execute_command_line(trim(cmd), cmdstat=cmdStat, cmdmsg=cmdMsg)  
+     
+  
   end subroutine write_dot
 end module matrix_m
