@@ -1,8 +1,5 @@
 module Header_m
- 
   private
-
-
   type, public :: matrix_node
       integer ::  row, col
       character(:), allocatable :: value
@@ -48,58 +45,71 @@ module Header_m
   function add(self,pos)
       class(Header_t), intent(inout) :: self
       integer, intent(in) :: pos
-      type(Header_node), pointer :: new_node
-      type(Header_node), pointer :: current
-      type(Header_node), pointer :: add ! return value
+      type(header_node), pointer :: new_node
+      type(header_node), pointer :: current
+      type(header_node), pointer :: add ! Value to return
+  
       allocate(new_node)
       new_node%position = pos
+  
+      ! If the header is empty
       if(self%size == 0) then
-          self%first => new_node
-          self%last => new_node
-          self%size = self%size + 1
-          add => new_node ! return the new node
+        self%first => new_node
+        self%last => new_node
+        self%size = self%size + 1
+        ! Return the new node
+        add => new_node 
       else
-          if (pos == self%first%position) then
-              add => self%first
-              return
-          else if(pos == self%last%position) then
-              add => self%last
-              return                
-          end if
-          ! Insert at the beginning
-      if(pos < self%first%position) then
+        ! If the position is already in the first or last node
+        if(pos == self%first%position) then
+          add => self%first  ! Return the first node
+          return
+        else if(pos == self%last%position) then
+          add => self%last ! Return the last node
+          return
+        end if
+        ! Insert at the beginning
+        if(pos < self%first%position) then
           new_node%next => self%first
           self%first%prev => new_node
           self%first => new_node
           self%size = self%size + 1
-          add => new_node ! return the new node
-      else if(pos > self%last%position) then
+          ! Return the new node
+          add => new_node
+        ! Insert at the end
+        else if(pos > self%last%position) then
           new_node%prev => self%last
           self%last%next => new_node
           self%last => new_node
           self%size = self%size + 1
-          add => new_node ! return the new node
-      else
+          ! Return the new node
+          add => new_node
+        else
+          ! Insert in the middle
           current => self%first%next
           do while(associated(current))
-              if(current%position == pos) then
-                  deallocate(new_node)
-                  add => current
-                  exit
-              else if(current%position > pos) then
-                  new_node%next => current
-                  new_node%prev => current%prev
-                  current%prev%next => new_node
-                  current%prev => new_node
-                  self%size = self%size + 1
-                  add => new_node ! return the new node
-                  exit
-              end if
-                  current => current%next
-              end do
-          end if
+            ! If the position is already in the list
+            if(current%position == pos) then
+              deallocate(new_node)
+              ! Return the current node
+              add => current
+              exit
+            ! If the position is between two nodes
+            else if(current%position > pos) then
+              new_node%next => current
+              new_node%prev => current%prev
+              current%prev%next => new_node
+              current%prev => new_node
+              self%size = self%size + 1
+              ! Return the new node
+              add => new_node
+              exit
+            end if
+            current => current%next
+          end do
+        end if
       end if
-  end function add
+    end function add
 
   subroutine print(self)
       class(Header_t), intent(inout) :: self

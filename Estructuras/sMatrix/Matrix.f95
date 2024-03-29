@@ -97,16 +97,17 @@ module matrix_m
 
     current => row_hdr_n%access
 
-    if(.not. associated(current)) then ! If header node is empty
+    if(.not. associated(current)) then 
       row_hdr_n%access => new_mtx_n
       move_first_lr_pointers = .true.
-    else if(new_mtx_n%col < current%col) then ! If new node will be on the left of the first node
+    else if(new_mtx_n%col < current%col) then  
       row_hdr_n%access%left => new_mtx_n
       new_mtx_n%right => row_hdr_n%access
       row_hdr_n%access => new_mtx_n
       move_first_lr_pointers = .true.
     end if
   end function move_first_lr_pointers
+
   function move_middle_lr_pointers(self, row_hdr_n, new_mtx_n)
     class(matrix_t), intent(inout) :: self
     type(header_node), pointer :: row_hdr_n
@@ -333,7 +334,7 @@ module matrix_m
         ! create matrix node
         address = self%get_address_memory(current_mtx_node)
         write(aux2, '(a)') current_mtx_node%value
-        createMtxNodes = createMtxNodes // '  "' // trim(address) // '" [label = "' // trim(aux2) 
+        createMtxNodes = createMtxNodes // '  "' // trim(address) // '" [fontsize = 6, label = "' // trim(aux2) 
         createMtxNodes = createMtxNodes // '",  color =" ' // trim(aux2)
         write(aux2, '(I0)') current_mtx_node%col 
         createMtxNodes = createMtxNodes // '"  group = ' // trim(aux2) // &

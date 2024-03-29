@@ -27,7 +27,7 @@ module abb_m
       procedure :: inorder
       procedure :: DatosInorder
       procedure :: posorder
-      procedure :: posorderData
+      procedure :: DatosPosorder
       procedure :: graph
       procedure :: printPixels
       procedure :: printPixelsById
@@ -344,39 +344,40 @@ contains
       end if
    end subroutine posordenRec
 
-   function posorderData(self) result(datos)
+   function DatosPosorder(self) result(datos)
       class(abb), intent(in) :: self
       character(len=1000) :: datos
       character(len=10) :: temp
       integer, allocatable :: array(:)
       integer :: i
 
-      call posordenDataRec(self%root, array)
+      call DatosPosorderRec(self%root, array)
 
       datos = ''  ! Initialize the result string
       do i = 1, size(array)
          write (temp, '(I0)') array(i)  ! Convert the integer to a string
          datos = trim(datos)//','//trim(temp)  ! Concatenate the strings with a space in between
       end do
-   end function posorderData
+   end function DatosPosorder
 
-   recursive subroutine posordenDataRec(root, array)
+   recursive subroutine DatosPosorderRec(root, array)
       type(Node_t), pointer, intent(in) :: root
       integer, allocatable, intent(inout) :: array(:)
       integer :: i
 
       if (associated(root)) then
          i = size(array) + 1
+         
+         call DatosPosorderRec(root%left, array)
+         call DatosPosorderRec(root%right, array)
          if (allocated(array)) then
             array = [array, root%value]
          else
             allocate (array(1))
             array(1) = root%value
          end if
-         call posordenDataRec(root%left, array)
-         call posordenDataRec(root%right, array)
       end if
-   end subroutine posordenDataRec
+   end subroutine DatosPosorderRec
 
    subroutine graph(self, filename)
       class(abb), intent(in) :: self

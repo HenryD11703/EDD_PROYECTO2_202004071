@@ -18,7 +18,8 @@
         "Estructuras/AVL/avl.f95",
         "Estructuras/AVL/AbbAVL.f95",
         "Estructuras/AlbumesLL/AlbumesList.f95",
-        "./lib/libjsonfortran.a"
+        "./lib/libjsonfortran.a",
+        "Estructuras/AVL/Cola.f95",
       ],
       "icon": {
         "dark": "./images/compile-dark.svg",
