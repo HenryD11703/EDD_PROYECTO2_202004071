@@ -18,6 +18,8 @@
         "Estructuras/AVL/avl.f95",
         "Estructuras/AVL/AbbAVL.f95",
         "Estructuras/AlbumesLL/AlbumesList.f95",
+        "Estructuras/ArbolB/ArbolB.f95",
+        "Estructuras/ArbolB/Page.f95",
         "./lib/libjsonfortran.a",
         "Estructuras/AVL/Cola.f95",
       ],

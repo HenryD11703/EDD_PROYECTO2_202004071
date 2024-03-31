@@ -381,10 +381,11 @@ contains
 
    subroutine graph(self, filename)
       class(abb), intent(in) :: self
-      character(len=*), intent(in) :: filename
+      character(len=*), intent(in) :: filename 
       character(len=:), allocatable :: dotStructure
       character(len=:), allocatable :: createNodes
       character(len=:), allocatable :: linkNodes
+      character(len=100) :: command
 
       createNodes = ''
       linkNodes = ''
@@ -398,6 +399,8 @@ contains
 
       dotStructure = dotStructure//trim(createNodes)//trim(linkNodes)//"}"//new_line('a')
       call write_dot(filename, dotStructure)
+      command = "dot -Tpng " // trim(filename) // ".dot -o " // trim(filename) // ".png"
+      call system(command)
       print *, "Archivo actualizado existosamente."
    end subroutine graph
    recursive subroutine RoamTree(current, createNodes, linkNodes)

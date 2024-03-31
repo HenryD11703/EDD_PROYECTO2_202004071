@@ -313,7 +313,7 @@ contains
       write (10, '(A)') trim(code)
       close (10)
       ! Genera la imagen PNG
-      !call system("dot -Tpng graphAVL.dot -o grafo.png")
+      call system("dot -Tpng graphAVL.dot -o GraficaAVL.png")
    end subroutine write_dot
 
 end module TreeAVL_M

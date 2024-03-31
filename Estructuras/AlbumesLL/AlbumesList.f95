@@ -179,8 +179,9 @@ contains
       write(10, '(a)') '}'
         close(10)
 
-      
+
       print *, "Generando archivo .dot"
+      call system('dot -Tpng ' // trim(filename) // ' -o ' // trim(adjustl(filename)) // '.png')
 
   end subroutine graphDot
 

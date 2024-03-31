@@ -1,5 +1,6 @@
 program main
-
+   
+   use BTree
    use matrix_m
    use abb_m
    use TreeAVL_M
@@ -10,8 +11,19 @@ program main
    type(matrix_t) :: matrixD
    type(Tree_t) :: treeAVL
    type(List_of_lists) :: listAlbums
-   integer :: choice = 0
-   do while (choice /= 3)
+   type(BTreeNode), pointer :: rootB => null()
+ 
+   rootB => root
+
+
+   caLL mainMenu()
+   
+contains
+
+   subroutine mainMenu()
+      integer :: choice = 0
+ 
+   do  
 
       print *, "1. Registro"
       print *, "2. Login"
@@ -26,13 +38,14 @@ program main
       case (2)
          call login()
       case (3)
-         exit
+         return
       case default
          print *, "Opcion Invalida."
       end select
+ 
    end do
 
-contains
+   end subroutine
 
    subroutine register()
       ! Implement user registration logic here
@@ -41,20 +54,22 @@ contains
    end subroutine
 
    subroutine login()
-      character(len=20) :: username
-      character(len=20) :: password
+      character(len=20) :: username = ""
+      character(len=20) :: password = ""
       print *, "Datos de login"
-      ! ADMIN User: admin, Password: EDD2024
-      !Usuarios seran cargados a travez de un archivo json
+   
       print *, "Username: "
       read *, username
       print *, "Password: "
       read *, password
       if (username == "admin" .and. password == "EDD2024") then
+ 
          call admin_menu()
+  
       else if (username == "user" .and. password == "user") then
-         call user_menu(username) ! Pasar el nombre para tener esos datos de sesion en el menu
-         print *, "Usuario logueado"
+ 
+         call user_menu(username) ! Pasar el nombre 
+
       else
          print *, "Nombre de usuario o contraseña incorrectos."
 
@@ -64,21 +79,48 @@ contains
    subroutine user_menu(username)
       character(len=20), intent(in) :: username
       integer :: choiceU = 0
-      do while (choiceU /= 4)
+      do  
          print *, "Bienvenido, ", username
          print *, "1. Visualizar reportes de las estructuras"
          print *, "2. Navegacion y gestion de imagenes"
          print *, "3. Opciones de carga masiva"
-         print *, "4. Salir"
+         print *, "4. Cerrar sesion"
          print *, "Seleccione una opcion:"
          read *, choiceU
          select case (choiceU)
          case (1)
-            !call reports_menu(username)
+            call reports_menu(username)
          case (2)
             call image_menu(username)
          case (3)
             call mass_upload_menu(username)
+         case (4)
+            exit
+         case default
+            print *, "Opcion Invalida."
+         end select
+      end do
+   end subroutine
+
+   subroutine reports_menu(username)
+      character(len=20), intent(in) :: username
+      integer :: choiceR = 0
+      do while (choiceR /= 5)
+         print *, "----------", trim(username), "----------"
+         print *, "1. Ver Arbol de Imagenes"
+         print *, "2. Ver Arbol de Capas"
+         print *, "3. Ver listado de Albumes"
+         print *, "4. Ver Capa en la matriz dispersa"
+         print *, "5. Salir"
+         print *, "Seleccione una opcion:"
+         read *, choiceR
+         select case (choiceR)
+         case (1)
+            call system("start D:\EDD_PROYECTO2_202004071\executable\GraficaAVL.png")
+         case (2)
+            call system("start D:\EDD_PROYECTO2_202004071\executable\ABBgraph.png")
+         case (3)
+            call system("start D:\EDD_PROYECTO2_202004071\executable\AlbumesGraph.dot.png")
          case (4)
             exit
          case default
@@ -558,8 +600,9 @@ contains
       type(json_value), pointer :: list_p, client_p, attribute_p
       type(json_core) :: jsonc
       character(:), allocatable :: dpi, nombre_cliente, password
-      integer :: size, iJ
+      integer :: size, iJ 
       logical :: found
+      integer(kind = 8)  :: dpiN
       call jsonc%initialize()
       call json%load(filename="D:\EDD_PROYECTO2_202004071\jsonFiles\usuarios.json")
       call json%info('', n_children=size)
@@ -576,8 +619,20 @@ contains
          if (found) call jsonc%get(attribute_p, password)
          print *, "Nombre: ", trim(nombre_cliente), " DPI: ", trim(dpi), " Password: ", trim(password)
 
+         read(dpi,*) dpiN
+         call insertB(dpiN)
+
       end do
       call json%destroy()
+      print *, "Usuarios cargados"
+ 
+
+      call traversal(root)
+      print *, ""
+
+      call writeGraphviz(root,"GraficaArbolB.dot")
+      call system("dot -Tpng D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.dot& 
+      & -o D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.png")
 
    end subroutine
 
