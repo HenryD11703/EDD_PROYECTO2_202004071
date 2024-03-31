@@ -21,8 +21,9 @@ module abbavl
       procedure :: amplitud
       procedure :: graph
       procedure :: amplitudData
+ 
    end type NODOABB
-
+   public :: generateABBDotCode
 contains
 
    !Subrutinas del tipo NODOABB
@@ -301,5 +302,43 @@ contains
 10    format(I0)
 
    end function get_address_memory
+
+   recursive function generateABBDotCode(root, createNodes, linkNodes) result(abbDotCode)
+      type(Node_tABB), pointer :: root
+      character(len=:), allocatable, intent(inout) :: createNodes, linkNodes
+      character(len=:), allocatable :: abbDotCode
+      character(len=20) :: address, str_value
+
+      if (associated(root)) then
+         ! SE OBTIENE INFORMACION DEL NODO ACTUAL
+         address = get_address_memory(root)
+         write (str_value, '(I0)') root%Value
+         createNodes = createNodes//'"'//trim(address)//'"'//'[label="'//trim(str_value)//'"];'//new_line('a')
+         ! VIAJAMOS A LA SUBRAMA IZQ
+         if (associated(root%Left)) then
+            linkNodes = linkNodes//'"'//trim(address)//'"'//" -> "
+            address = get_address_memory(root%Left)
+            linkNodes = linkNodes//'"'//trim(address)//'" ' &
+                        //'[label = "L"];'//new_line('a')
+
+         end if
+         ! VIAJAMOS A LA SUBRAMA DER
+         if (associated(root%Right)) then
+            address = get_address_memory(root)
+            linkNodes = linkNodes//'"'//trim(address)//'"'//" -> "
+            address = get_address_memory(root%Right)
+            linkNodes = linkNodes//'"'//trim(address)//'" ' &
+                        //'[label = "R"];'//new_line('a')
+         end if
+
+         abbDotCode = trim(createNodes) // trim(linkNodes)
+         createNodes = ""
+         linkNodes = ""
+         abbDotCode = abbDotCode // generateABBDotCode(root%Left, createNodes, linkNodes)
+         abbDotCode = abbDotCode // generateABBDotCode(root%Right, createNodes, linkNodes)
+      else
+         abbDotCode = ""
+      end if
+   end function generateABBDotCode
 
 end module abbavl

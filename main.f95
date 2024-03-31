@@ -337,28 +337,66 @@ contains
       character(len=20), intent(in) :: username
       integer :: choiceImgM = 0
       print *, "USUARIO: ", username
-      do while (choiceImgM /= 4)
+      do   
          print *, "Menu de imagenes"
          print *, "1. Generacion de Imagenes"
          print *, "2. Gestion de Imagenes"
-         print *, "3. Visualizar el estado de las estructuras"
-         print *, "4. Salir"
+         print *, "3. Salir"
          print *, "Seleccione una opcion:"
          read *, choiceImgM
          select case (choiceImgM)
          case (1)
             call generate_image_menu(username)
          case (2)
-            !call manage_image_menu(username)
+            !Para eliminar o añaadir 
+            call manage_image_menu(username)
          case (3)
-            !call reports_menu(username)
-         case (4)
             return
          case default
             print *, "Opcion Invalida."
          end select
       end do
    end subroutine
+
+   subroutine manage_image_menu(username)
+      character(len=20), intent(in) :: username
+      integer :: choiceIMM = 0, idImagen,IdcapasA, numCapas, iA
+      
+      print *, "USUARIO: ", username
+      do 
+         print *, "1. Eliminar Imagen"
+         print *, "2. Agregar Imagen a AVL"
+         print *, "3. Salir"
+         print *, "Seleccione una opcion:"
+         read *, choiceIMM
+         select case (choiceIMM)
+         case (1)
+            print *, "Ingrese el id de la imagen a eliminar:"
+            read *, idImagen
+            !call treeAVL%deleteImagen(idImagen)
+            call treeAVL%generateGraph()
+         case (2)
+            print *, "Ingrese el id de la imagen a agregar:"
+            read *, idImagen
+            call treeAVL%insert(idImagen)
+
+            print *, "Ingrese el número de capas de la imagen:"
+            read *, numCapas
+            do iA = 1, numCapas
+                print *, "Ingrese el id de la capa ", iA, ":"
+                read *, IdcapasA
+                call treeAVL%insertIntoABB(idImagen, IdcapasA)
+            end do
+            call treeAVL%generateGraph()           
+         case (3)
+            exit
+         case default
+            print *, "Opcion Invalida."
+         end select
+      end do
+   
+   end subroutine
+      
 
    subroutine generate_image_menu(username)
       character(len=20), intent(in) :: username
@@ -431,7 +469,7 @@ contains
       !puede ver SUS imagenes, Sus capas, etc.
       call matrixD%init()
       print *, "USUARIO: ", username
-      do while (iV /= 3)
+      do  
          print *, "1. Ingresar ID de la Capa"
          print *, "2. Salir"
          print *, "Seleccione una opcion:"
@@ -587,7 +625,8 @@ contains
 
    subroutine admin_menu()
       integer :: choiceA = 0
-      type(UsuarioB) :: usuarioAEliminar
+      integer(kind=8) :: idEliminar
+    
       do  
          print *, "1. Cargar usuarios"
          print *, "2. Arbol B de usuarios"
@@ -600,20 +639,25 @@ contains
          case (1)
             call add_user()
          case (2)
-
+            call system("start D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.png")
+            print *, "Abriendo arbol B..."
          case (3)
             !call modify_user()
          case (4)
             print *, "Eliminar usuarios"
             print * , "Ingrese el DPI del usuario a eliminar"
-            read *, usuarioAEliminar%id
-            print *, "Ingrese el nombre del usuario a eliminar"
-            read *, usuarioAEliminar%nombre
-            print *, "Ingrese la contraseña del usuario a eliminar"
-            read *, usuarioAEliminar%contrasena
-            !call deleteB(usuarioAEliminar)
+            read *,  idEliminar
+             
+            !call deleteUserFromBTree(idEliminar)
+
+            print *, "Actualizando arbol B..."
+
+            call traversal(root) 
+            call writeGraphviz(root,"GraficaArbolB.dot")
+            call system("dot -Tpng D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.dot&
+            & -o D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.png")
             
-            !call deleteB(idEliminar)
+       
          case (5)
             return
             
@@ -681,3 +725,4 @@ contains
    end subroutine
 
 end program main
+ 

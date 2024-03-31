@@ -241,58 +241,72 @@ contains
 
    subroutine GenerateGraph(this)
       class(Tree_t), intent(inout) :: this
-      character(len=:), allocatable :: dotStructure
-      character(len=:), allocatable :: createNodes
-      character(len=:), allocatable :: linkNodes
+      character(len=:), allocatable :: dotStructure, abbDotCode
+      character(len=:), allocatable :: createNodes, linkNodes
+  
       createNodes = ''
       linkNodes = ''
-
+      abbDotCode = ''
+  
       dotStructure = "digraph G{"//new_line('a')
       dotStructure = dotStructure//"node [shape=circle];"//new_line('a')
-
+  
       if (associated(this%root)) then
-         call RoamTree(this%root, createNodes, linkNodes)
+          call RoamTree(this%root, createNodes, linkNodes, abbDotCode)
       end if
-
-      dotStructure = dotStructure//trim(createNodes)//trim(linkNodes)//"}"//new_line('a')
+  
+      dotStructure = dotStructure//trim(createNodes)//trim(linkNodes)//trim(abbDotCode)//"}"//new_line('a')
       call write_dot(dotStructure)
       print *, "Archivo actualizado existosamente."
-   end subroutine GenerateGraph
+  end subroutine GenerateGraph
 
-   recursive subroutine RoamTree(actual, createNodes, linkNodes)
-      type(Node_tAVL), pointer :: actual
-      character(len=:), allocatable, intent(inout) :: createNodes
-      character(len=:), allocatable, intent(inout) :: linkNodes
-      character(len=20) :: address
-      character(len=20) :: str_value
+  function empty_string() result(str)
+   character(len=:), allocatable :: str
+   str = ""
+end function empty_string
 
-      if (associated(actual)) then
-         ! SE OBTIENE INFORMACION DEL NODO ACTUAL
-         address = get_address_memory(actual)
-         write (str_value, '(I0)') actual%Value
-         createNodes = createNodes//'"'//trim(address)//'"'//'[label="'//trim(str_value)//'"];'//new_line('a')
-         ! VIAJAMOS A LA SUBRAMA IZQ
-         if (associated(actual%Left)) then
+recursive subroutine RoamTree(actual, createNodes, linkNodes, abbDotCode)
+type(Node_tAVL), pointer :: actual
+character(len=:), allocatable, intent(inout) :: createNodes, linkNodes, abbDotCode
+character(len=20) :: address, str_value
+character(len=:), allocatable :: abbCode
+character(len=:), allocatable :: abbCreateNodes, abbLinkNodes
+
+    if (associated(actual)) then
+        ! SE OBTIENE INFORMACION DEL NODO ACTUAL
+        address = get_address_memory(actual)
+        write (str_value, '(I0)') actual%Value
+        createNodes = createNodes//'"'//trim(address)//'"'//'[label="'//trim(str_value)//'"];'//new_line('a')
+
+        ! Generar código dot para el ABB de este nodo AVL
+        abbCreateNodes = ""
+        abbLinkNodes = ""
+        abbCode = "subgraph cluster_" // trim(address) // " { " // new_line('a')
+        abbCode = abbCode // "label=""ABB"";" // new_line('a')
+        abbCode = abbCode // generateABBDotCode(actual%NodoABB%root, abbCreateNodes, abbLinkNodes)
+        abbCode = abbCode // "}" // new_line('a')
+        abbDotCode = abbDotCode // abbCode
+
+        ! VIAJAMOS A LA SUBRAMA IZQ
+        if (associated(actual%Left)) then
             linkNodes = linkNodes//'"'//trim(address)//'"'//" -> "
             address = get_address_memory(actual%Left)
             linkNodes = linkNodes//'"'//trim(address)//'" ' &
                         //'[label = "L"];'//new_line('a')
-
-         end if
-         ! VIAJAMOS A LA SUBRAMA DER
-         if (associated(actual%Right)) then
+        end if
+        ! VIAJAMOS A LA SUBRAMA DER
+        if (associated(actual%Right)) then
             address = get_address_memory(actual)
             linkNodes = linkNodes//'"'//trim(address)//'"'//" -> "
             address = get_address_memory(actual%Right)
             linkNodes = linkNodes//'"'//trim(address)//'" ' &
                         //'[label = "R"];'//new_line('a')
-         end if
+        end if
 
-         call RoamTree(actual%Left, createNodes, linkNodes)
-         call RoamTree(actual%Right, createNodes, linkNodes)
-      end if
-   end subroutine RoamTree
-
+        call RoamTree(actual%Left, createNodes, linkNodes, abbDotCode)
+        call RoamTree(actual%Right, createNodes, linkNodes, abbDotCode)
+    end if
+end subroutine RoamTree
    function get_address_memory(node) result(address)
       !class(matrix_t), intent(in) :: self
       type(Node_tAVL), pointer :: node

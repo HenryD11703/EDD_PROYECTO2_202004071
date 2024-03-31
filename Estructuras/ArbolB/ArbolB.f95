@@ -24,13 +24,25 @@ module BTree
 
     contains
 
-    !Casos a tomar en cuenta para la eliminacion de un dato
-    !1. Si el dato a eliminar es una hoja con mas de MINI datos, simplemente se elimina
-    !2. Si el dato a eliminar es una hoja con MINI datos, se debe de hacer un reacomodo con los datos de los nodos hermanos
-    ! si y solo si el nodo hermano tiene mas de MINI datos
-    !3. Si el dato a eliminar es una hoja con MINI datos, se debe de hacer un reacomodo con los datos de los nodos hermanos 
-    ! combinando los datos de los nodos hermanos y el dato a eliminar a través de un nodo padre
+   !Caso 1: El nodo es una hoja y tiene más de t claves. En este caso, simplemente eliminamos la clave del nodo.
 
+    !Caso 2: El nodo es una hoja y tiene exactamente t claves. Aquí, la eliminación de una clave puede hacer que el nodo tenga menos de t claves, lo cual es una violación de las propiedades del árbol B. Para manejar esto, podemos:
+
+    !a. Caso 2a: Si el hermano adyacente tiene más de t claves, entonces realizamos una rotación: movemos una clave del padre al nodo, movemos la clave del hermano al padre y movemos el hijo del hermano al nodo.
+
+    !b. Caso 2b: Si el hermano adyacente tiene exactamente t claves, entonces fusionamos el nodo con su hermano. La clave del padre que está entre estos dos nodos se mueve hacia abajo y se fusiona con ellos.
+
+    !Caso 3: La clave está en un nodo interno N. En este caso, necesitamos reemplazar la clave con su predecesor o sucesor que estará en una hoja. Luego, eliminamos esa clave de la hoja. Esto puede resultar en un caso 2 en la hoja.
+
+    !a. Caso 3a: Si el hijo que precede a K en N tiene al menos t claves, entonces encontramos el predecesor de K en el subárbol de ese hijo. Reemplazamos K por el predecesor y recursivamente eliminamos el predecesor en el subárbol del hijo.
+
+    !b. Caso 3b: Si el hijo que sigue a K en N tiene al menos t claves, entonces encontramos el sucesor de K en el subárbol de ese hijo. Reemplazamos K por el sucesor y recursivamente eliminamos el sucesor en el subárbol del hijo.
+
+!   c. Caso 3c: Si ninguno de los hijos adyacentes a K en N tiene más de t-1 claves, entonces combinamos K y todos los descendientes de K que están en los dos hijos en un solo nodo.
+    
+
+ 
+    
     recursive function checkUser(id, password) result(isValid)
     integer(kind=8), intent(in) :: id
     character(len=50), intent(in) :: password
