@@ -68,28 +68,31 @@ contains
    end subroutine
 
    subroutine login()
-      character(len=20) :: username = ""
-      character(len=20) :: password = ""
+      use BTree
+      character(len=50) :: username = ""
+      character(len=50) :: password = ""
+      integer(kind=8) :: dpiIngresado
+      logical :: isValid
       print *, "Datos de login"
-   
+  
       print *, "Username: "
       read *, username
       print *, "Password: "
       read *, password
       if (username == "admin" .and. password == "EDD2024") then
- 
-         call admin_menu()
   
-      else if (username == "user" .and. password == "user") then
- 
-         call user_menu(username) ! Pasar el nombre 
-
+          call admin_menu()
+  
       else
-         print *, "Nombre de usuario o contraseña incorrectos."
-
+         read(username,*) dpiIngresado
+          isValid = checkUser(dpiIngresado, password)
+          if (isValid) then
+              call user_menu(username) ! Pasar el nombre 
+          else
+              print *, "Nombre de usuario o contraseña incorrectos."
+          end if
       end if
-   end subroutine
-
+  end subroutine login
    subroutine user_menu(username)
       character(len=20), intent(in) :: username
       integer :: choiceU = 0
@@ -584,11 +587,13 @@ contains
 
    subroutine admin_menu()
       integer :: choiceA = 0
-      do while (choiceA /= 3)
+      type(UsuarioB) :: usuarioAEliminar
+      do  
          print *, "1. Cargar usuarios"
          print *, "2. Arbol B de usuarios"
          print *, "3. Modificar usuarios"
-         print *, "4. Salir"
+         print *, "4. Eliminar usuarios"
+         print *, "5. Salir"
          print *, "Seleccione una opcion:"
          read *, choiceA
          select case (choiceA)
@@ -599,7 +604,19 @@ contains
          case (3)
             !call modify_user()
          case (4)
-            exit
+            print *, "Eliminar usuarios"
+            print * , "Ingrese el DPI del usuario a eliminar"
+            read *, usuarioAEliminar%id
+            print *, "Ingrese el nombre del usuario a eliminar"
+            read *, usuarioAEliminar%nombre
+            print *, "Ingrese la contraseña del usuario a eliminar"
+            read *, usuarioAEliminar%contrasena
+            !call deleteB(usuarioAEliminar)
+            
+            !call deleteB(idEliminar)
+         case (5)
+            return
+            
          case default
             print *, "Opcion Invalida."
          end select

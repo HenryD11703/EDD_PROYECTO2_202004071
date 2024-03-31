@@ -24,7 +24,46 @@ module BTree
 
     contains
 
-    
+    !Casos a tomar en cuenta para la eliminacion de un dato
+    !1. Si el dato a eliminar es una hoja con mas de MINI datos, simplemente se elimina
+    !2. Si el dato a eliminar es una hoja con MINI datos, se debe de hacer un reacomodo con los datos de los nodos hermanos
+    ! si y solo si el nodo hermano tiene mas de MINI datos
+    !3. Si el dato a eliminar es una hoja con MINI datos, se debe de hacer un reacomodo con los datos de los nodos hermanos 
+    ! combinando los datos de los nodos hermanos y el dato a eliminar a través de un nodo padre
+
+    recursive function checkUser(id, password) result(isValid)
+    integer(kind=8), intent(in) :: id
+    character(len=50), intent(in) :: password
+    logical :: isValid
+    type(BTreeNode), pointer :: currentNode
+    currentNode => root
+    isValid = .false.
+    call searchUser(currentNode, id, password, isValid)
+end function checkUser
+
+recursive subroutine searchUser(node, id, password, isValid)
+    type(BTreeNode), pointer, intent(in) :: node
+    integer(kind=8), intent(in) :: id
+    character(len=50), intent(in) :: password
+    logical, intent(out) :: isValid
+    integer :: i
+
+    if (associated(node)) then
+        i = 0
+        do while (i < node%num)
+            if (node%val(i+1)%id == id .and. trim(node%val(i+1)%contrasena) == trim(password)) then
+                isValid = .true.
+                return
+            end if
+            call searchUser(node%link(i)%ptr, id, password, isValid)
+            if (isValid) then
+                return
+            end if
+            i = i + 1
+        end do
+        call searchUser(node%link(i)%ptr, id, password, isValid)
+    end if
+end subroutine searchUser
 
     subroutine insertB(usuario)
         type(UsuarioB), intent(in) :: usuario
@@ -96,8 +135,8 @@ end function setValue
 
     subroutine splitNode(user, pval, pos, node, child, newnode)
         type(UsuarioB), intent(in) :: user
-        integer(kind=8), intent(in) :: pos  ! Cambia a INTEGER(kind=8)
-        type(UsuarioB), intent(inout) :: pval  ! Cambia a INTEGER(kind=8)
+        integer(kind=8), intent(in) :: pos  
+        type(UsuarioB), intent(inout) :: pval  
         type(BTreeNode), pointer, intent(inout) :: node,  newnode
         type(BTreeNode), pointer, intent(in) ::  child
         integer :: median, i, j
