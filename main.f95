@@ -43,14 +43,28 @@ contains
          print *, "Opcion Invalida."
       end select
  
-   end do
+   end do 
 
    end subroutine
 
    subroutine register()
-      ! Implement user registration logic here
+      type(UsuarioB) :: usuarioReg
       print *, "Registrar usuario ----"
-      ! TODO: al ya tener el arbol, crear el metodo para añadir un usuario
+      print *, "Ingrese el DPI: "
+      read *, usuarioReg%id
+      print *, "Ingrese el nombre: "
+      read *, usuarioReg%nombre
+      print *, "Ingrese la contraseña: "
+      read *, usuarioReg%contrasena
+      call insertB(usuarioReg)
+      print *, "Usuario registrado con exito."
+      print *, "Actualizando arbol B..."
+    
+      call writeGraphviz(root,"GraficaArbolB.dot")
+      call system("dot -Tpng D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.dot&
+      & -o D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.png")
+      
+      return
    end subroutine
 
    subroutine login()
@@ -595,7 +609,7 @@ contains
    subroutine add_user()
       use json_module
       implicit none
-
+      type(UsuarioB) :: usuarioAB
       type(json_file) :: json
       type(json_value), pointer :: list_p, client_p, attribute_p
       type(json_core) :: jsonc
@@ -612,15 +626,28 @@ contains
 
          call jsonc%get_child(list_p, iJ, client_p, found)
          call jsonc%get_child(client_p, 'nombre_cliente', attribute_p, found=found)
+ 
          if (found) call jsonc%get(attribute_p, nombre_cliente)
          call jsonc%get_child(client_p, 'dpi', attribute_p, found=found)
+ 
          if (found) call jsonc%get(attribute_p, dpi)
          call jsonc%get_child(client_p, 'password', attribute_p, found=found)
          if (found) call jsonc%get(attribute_p, password)
          print *, "Nombre: ", trim(nombre_cliente), " DPI: ", trim(dpi), " Password: ", trim(password)
 
          read(dpi,*) dpiN
-         call insertB(dpiN)
+         
+         usuarioAB%id = dpiN
+         usuarioAB%nombre = nombre_cliente
+         usuarioAB%contrasena = password
+         
+         call insertB(usuarioAB)
+
+         usuarioAB%id = 0
+         usuarioAB%nombre = ""
+         usuarioAB%contrasena = ""
+         !Limpiar variables para evitar errores
+
 
       end do
       call json%destroy()
