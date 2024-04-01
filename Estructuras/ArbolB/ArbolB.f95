@@ -41,7 +41,32 @@ module BTree
 !   c. Caso 3c: Si ninguno de los hijos adyacentes a K en N tiene más de t-1 claves, entonces combinamos K y todos los descendientes de K que están en los dos hijos en un solo nodo.
     
 
- 
+    recursive subroutine updateB( usuario)
+    type(UsuarioB), intent(in) :: usuario
+    type(BTreeNode), pointer :: currentNode
+    currentNode => root
+    call updateUser(currentNode, usuario)
+end subroutine updateB
+
+recursive subroutine updateUser(node, usuario)
+    type(BTreeNode), pointer, intent(in) :: node
+    type(UsuarioB), intent(in) :: usuario
+    integer :: i
+
+    if (associated(node)) then
+        i = 0
+        do while (i < node%num)
+            if (node%val(i+1)%id == usuario%id) then
+                node%val(i+1)%nombre = usuario%nombre
+                node%val(i+1)%contrasena = usuario%contrasena
+                return
+            end if
+            call updateUser(node%link(i)%ptr, usuario)
+            i = i + 1
+        end do
+        call updateUser(node%link(i)%ptr, usuario)
+    end if
+end subroutine updateUser
     
     recursive function checkUser(id, password) result(isValid)
     integer(kind=8), intent(in) :: id

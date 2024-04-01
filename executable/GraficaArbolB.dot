@@ -1,20 +1,4 @@
 digraph g {
 node [shape = record,height=.1];
-node2137008944416 [label = "<f0>         654521336523\nJuan Perez|<f1> "];
-"node2137008944416":f0 -> "node2137010459840";
-node2137010459840 [label = "<f0>         222333444555\nEsteban Soto|<f1> |        456789123654\nAntonio Perez|<f2> "];
-"node2137010459840":f0 -> "node2137010450272";
-node2137010450272 [label = "<f0>                  123\nHenry|<f1> |        123456789012\nPedro González|<f2> |        123456789013\nLuis García|<f3> "];
-"node2137010459840":f1 -> "node2137008931696";
-node2137008931696 [label = "<f0>         333222111456\nSofía Martínez|<f1> |        333222111457\nAndrea Hernández|<f2> "];
-"node2137010459840":f2 -> "node2137008912352";
-node2137008912352 [label = "<f0>         456789123655\nMarco Flores|<f1> |        555444333210\nCamila Díaz|<f2> |        555444333211\nValentina Castro|<f3> |        564521336523\nEduardo Morales|<f4> "];
-"node2137008944416":f1 -> "node2137008936112";
-node2137008936112 [label = "<f0>         789456123987\nAna García|<f1> |        855444333211\nDaniel Molina|<f2> "];
-"node2137008936112":f0 -> "node2137010458368";
-node2137010458368 [label = "<f0>         654521346523\nMaria Lopez|<f1> |        654521346524\nJulia Ramírez|<f2> "];
-"node2137008936112":f1 -> "node2137008913824";
-node2137008913824 [label = "<f0>         789456123988\nIsabel Romero|<f1> |        855444333210\nCarlos Díaz|<f2> "];
-"node2137008936112":f2 -> "node2137008928752";
-node2137008928752 [label = "<f0>         987654321098\nDiego Rodríguez|<f1> |        987654321099\nJorge López|<f2> "];
+node1406925699952 [label = "<f0>                  123\nhenry|<f1> "];
 }

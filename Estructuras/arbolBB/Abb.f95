@@ -33,10 +33,34 @@ module abb_m
       procedure :: printPixelsById
       procedure :: getPixelsById
       procedure :: getPixelSizeByID
+      procedure :: printLeafNodes
       
    end type abb
 
 contains
+
+subroutine printLeafNodes(self)
+   class(abb), intent(in) :: self
+   
+   call printLeafNodesRec(self%root)
+end subroutine printLeafNodes
+
+recursive subroutine printLeafNodesRec(root)
+   type(Node_t), pointer, intent(in) :: root
+   
+   if (associated(root)) then
+       if (.not. associated(root%left) .and. .not. associated(root%right)) then
+           ! Este es un nodo hoja
+           write (*, '(I0)') root%value
+       else
+           ! Recorrer el subárbol izquierdo
+           call printLeafNodesRec(root%left)
+           
+           ! Recorrer el subárbol derecho
+           call printLeafNodesRec(root%right)
+       end if
+   end if
+end subroutine printLeafNodesRec
 
    subroutine printPixelsById(self, id)
       class(abb), intent(in) :: self

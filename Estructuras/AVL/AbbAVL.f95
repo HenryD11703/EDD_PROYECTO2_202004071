@@ -3,7 +3,8 @@ module abbavl
    implicit none
    private
 
-   type :: Node_tABB
+
+   type, public :: Node_tABB
       integer :: value
       type(Node_tABB), pointer :: right => null()
       type(Node_tABB), pointer :: left => null()
@@ -21,10 +22,40 @@ module abbavl
       procedure :: amplitud
       procedure :: graph
       procedure :: amplitudData
+      procedure :: countNodes
  
    end type NODOABB
    public :: generateABBDotCode
 contains
+
+!vamos a usar esta funcion para contar los nodos del arbol
+function countNodes(self) result(nodeCount)
+   class(NODOABB), intent(inout) :: self
+   integer :: nodeCount
+   type(queue_list) :: queue
+   type(Node_tABB), pointer :: root
+
+   nodeCount = 0
+   root => self%root
+   if (associated(root)) then
+       call queue%enqueue(root%value)
+       nodeCount = 1
+   end if
+
+   do while (queue%size > 0)
+       call queue%dequeue()
+       root => findNode(self%root, queue%IDE)
+       if (associated(root%left)) then
+           call queue%enqueue(root%left%value)
+           nodeCount = nodeCount + 1
+       end if
+       if (associated(root%right)) then
+           call queue%enqueue(root%right%value)
+           nodeCount = nodeCount + 1
+       end if
+   end do
+end function countNodes
+   
 
    !Subrutinas del tipo NODOABB
    subroutine insert(self, val)

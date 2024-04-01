@@ -1,12 +1,12 @@
 program main
-   
+ 
    use BTree
    use matrix_m
    use abb_m
    use TreeAVL_M
    use List_of_lists_m
    implicit none
-
+   
    type(abb) :: treeABB
    type(matrix_t) :: matrixD
    type(Tree_t) :: treeAVL
@@ -93,6 +93,7 @@ contains
           end if
       end if
   end subroutine login
+
    subroutine user_menu(username)
       character(len=20), intent(in) :: username
       integer :: choiceU = 0
@@ -122,7 +123,10 @@ contains
    subroutine reports_menu(username)
       character(len=20), intent(in) :: username
       integer :: choiceR = 0
-      do while (choiceR /= 5)
+      type(pixel), dimension(:), allocatable :: pixelsV
+      integer :: idCapa, iC
+      character(:), allocatable :: idCapaS
+      do  
          print *, "----------", trim(username), "----------"
          print *, "1. Ver Arbol de Imagenes"
          print *, "2. Ver Arbol de Capas"
@@ -139,7 +143,17 @@ contains
          case (3)
             call system("start D:\EDD_PROYECTO2_202004071\executable\AlbumesGraph.dot.png")
          case (4)
-            exit
+            call matrixD%init()
+            print *, "Ingrese el id de la capa a visualizar:"
+            read *, idCapa
+            pixelsV = treeABB%getPixelsById(idCapa)
+            do iC = 1, size(pixelsV)
+               print *, "Fila: ", pixelsV(iC)%Fila, " Columna: ", pixelsV(iC)%Columna, " Color: ", pixelsV(iC)%color
+            end do            
+            write (idCapaS, '(I10)') idCapa
+            call matrixD%create_dot("Capa"//trim(idCapaS))
+         case (5)
+            return
          case default
             print *, "Opcion Invalida."
          end select
@@ -149,8 +163,8 @@ contains
    subroutine mass_upload_menu(username)
       character(len=20), intent(in) :: username
       integer :: choiceUM = 0
-      character(:), allocatable :: filename
-      do while (choiceUM /= 4)
+ 
+      do 
          print *, "----------", trim(username), "----------"
          print *, "1. Cargar Capas"
          print *, "2. Cargar Imagenes"
@@ -341,7 +355,8 @@ contains
          print *, "Menu de imagenes"
          print *, "1. Generacion de Imagenes"
          print *, "2. Gestion de Imagenes"
-         print *, "3. Salir"
+         print *, "3. Reportes de las estructuras"
+         print *, "4. Salir"
          print *, "Seleccione una opcion:"
          read *, choiceImgM
          select case (choiceImgM)
@@ -351,10 +366,49 @@ contains
             !Para eliminar o añaadir 
             call manage_image_menu(username)
          case (3)
+            call reportes(username)
+         case (4)
             return
          case default
             print *, "Opcion Invalida."
          end select
+      end do
+   end subroutine
+
+   subroutine reportes(username)
+      character(len=20), intent(in) :: username
+      integer :: choiceRep = 0
+      print *, "USUARIO: ", username
+      do
+         print *, "1. Top 5 imagenes con mas capas"
+         print *, "2. Todas las capas que son hojas"
+         print *, "3. Profundidad del arbol de capas"
+         print *, "4. Lista de capas en Preorden, Inorden y Postorden"
+         print *, "5. Salir"
+         print *, "Seleccione una opcion:"
+         read *, choiceRep
+         select case (choiceRep)
+         case (1)
+            call treeAVL%CantidadABBenAVL()
+         case (2)
+            call treeABB%printLeafNodes()
+         case (3)
+            !call treeABB%depth()
+         case (4)
+            print *, "---Lista de capas---"
+            print *, "Preorden"
+            call treeABB%preorder()
+            print *, "Inorden"
+            call treeABB%inorder()
+            print *, "Postorden"
+            call treeABB%posorder()
+            print *, "-------------------"
+         case (5)
+            return
+         case default
+            print *, "Opcion Invalida."
+         end select
+
       end do
    end subroutine
 
@@ -373,7 +427,7 @@ contains
          case (1)
             print *, "Ingrese el id de la imagen a eliminar:"
             read *, idImagen
-            !call treeAVL%deleteImagen(idImagen)
+            call treeAVL%delete(idImagen)
             call treeAVL%generateGraph()
          case (2)
             print *, "Ingrese el id de la imagen a agregar:"
@@ -425,8 +479,7 @@ contains
       end do
    end subroutine
 
-   !en esta subrutina se dara el id de una imagen, imprimire en consola el recorrido al buscar la imagen
-   !el recorrido sera por amplitud del abb, entonces imprimir este orden y luego se creara la imagen
+  
    subroutine generate_image_by_tree(username)
       integer, dimension(:), allocatable :: datosAA
       character(len=20), intent(in) :: username
@@ -642,7 +695,7 @@ contains
             call system("start D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.png")
             print *, "Abriendo arbol B..."
          case (3)
-            !call modify_user()
+            call modify_user()
          case (4)
             print *, "Eliminar usuarios"
             print * , "Ingrese el DPI del usuario a eliminar"
@@ -665,6 +718,29 @@ contains
             print *, "Opcion Invalida."
          end select
       end do
+   end subroutine
+
+   subroutine modify_user()
+      type(UsuarioB) :: usuarioMod
+      integer(kind=8) :: idModificar
+      character(len=50) :: nombreNuevo, contrasenaNueva
+      print *, "Modificar usuario ----"
+      print *, "Ingrese el DPI del usuario a modificar: "
+      read *, idModificar
+      print *, "Ingrese el nuevo nombre: "
+      read *, nombreNuevo
+      print *, "Ingrese la nueva contraseña: "
+      read *, contrasenaNueva
+      usuarioMod%id = idModificar
+      usuarioMod%nombre = nombreNuevo
+      usuarioMod%contrasena = contrasenaNueva
+      call updateB(usuarioMod)
+      print *, "Usuario modificado con exito."
+      print *, "Actualizando arbol B..."
+      call traversal(root)
+      call writeGraphviz(root,"GraficaArbolB.dot")
+      call system("dot -Tpng D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.dot&
+      & -o D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.png")       
    end subroutine
 
    subroutine add_user()

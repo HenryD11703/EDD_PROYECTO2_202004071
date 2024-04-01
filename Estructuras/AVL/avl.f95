@@ -1,5 +1,6 @@
 module TreeAVL_M
    use abbavl
+   use LinkedListModule
    implicit none
 
    ! Cons
@@ -7,16 +8,24 @@ module TreeAVL_M
    integer, parameter :: BALANCED = 0
    integer, parameter :: RIGHT_HEAVY = +1
 
+
+   type(LinkedList) :: ListaL
+ 
+
+
    type Node_tAVL
       integer :: Value
       integer :: Factor
+ 
       type(NodoABB) :: NodoABB
       type(Node_tAVL), pointer :: Left => null()
       type(Node_tAVL), pointer :: Right => null()
    end type Node_tAVL
 
+   
+
    type Tree_t
-      type(Node_tAVL), pointer :: root => null()
+      type(Node_tAVL), pointer :: root => null() 
    contains
       procedure :: newTree
       procedure :: insert
@@ -24,10 +33,93 @@ module TreeAVL_M
       procedure :: insertIntoABB
       procedure :: printAVLandABB
       procedure :: getABBValues
+      procedure :: delete
+      procedure :: CantidadABBenAVL
 
    end type Tree_t
 
 contains
+
+
+subroutine CantidadABBenAVL(self)
+   class(Tree_t), intent(inout) :: self
+   type(LinkedList) :: ListaAux
+   call printCantidadABBenAVLRec(self%root, ListaAux)
+   call SortList(ListaAux)
+   call PrintList(ListaAux)
+end subroutine CantidadABBenAVL
+
+recursive subroutine printCantidadABBenAVLRec(Anode, ListaAux)
+   type(LinkedList), intent(inout) :: ListaAux
+   type(Node_tAVL), pointer :: Anode
+
+   if (associated(Anode)) then
+      !print *, "AVL Node: ", Anode%Value
+      !print *, "Cantidad de nodos en ABB: ", Anode%NodoABB%countNodes()
+      call AddNode(ListaAux, Anode%Value,Anode%NodoABB%countNodes())
+      call printCantidadABBenAVLRec(Anode%Left, ListaAux)
+      call printCantidadABBenAVLRec(Anode%Right, ListaAux)
+   end if
+end subroutine printCantidadABBenAVLRec
+
+ 
+
+recursive subroutine delete(self, value)
+class(Tree_t), intent(inout) :: self
+integer, intent(in) :: value
+type(Node_tAVL), pointer :: nodeToDelete, replacementNode
+
+self%root => deleteNode(self%root, value, nodeToDelete, replacementNode)
+end subroutine delete
+
+recursive function deleteNode(root, value, nodeToDelete, replacementNode) result(newRoot)
+    type(Node_tAVL), pointer :: root, newRoot, nodeToDelete, replacementNode
+    integer, intent(in) :: value
+
+    if (.not. associated(root)) then
+        newRoot => null()
+        nodeToDelete => null()
+        replacementNode => null()
+    else if (value < root%Value) then
+        root%Left => deleteNode(root%Left, value, nodeToDelete, replacementNode)
+        newRoot => rebalance(root, replacementNode)
+    else if (value > root%Value) then
+        root%Right => deleteNode(root%Right, value, nodeToDelete, replacementNode)
+        newRoot => rebalance(root, replacementNode)
+    else
+        nodeToDelete => root
+        if (.not. associated(root%Left)) then
+            newRoot => root%Right
+            replacementNode => null()
+        else if (.not. associated(root%Right)) then
+            newRoot => root%Left
+            replacementNode => null()
+        else
+            root%Right => findMinNode(root%Right, replacementNode)
+            root%Value = replacementNode%Value
+            newRoot => rebalance(root, replacementNode)
+        end if
+    end if
+end function deleteNode
+
+recursive function findMinNode(root, minNode) result(newRoot)
+type(Node_tAVL), pointer :: root, newRoot, minNode
+if (.not. associated(root%Left)) then
+    newRoot => root%Right
+    minNode => root
+else
+    root%Left => findMinNode(root%Left, minNode)
+    newRoot => rebalance(root, minNode)
+end if
+end function findMinNode
+
+function rebalance(node, replacementNode) result(newNode)
+type(Node_tAVL), pointer :: node, newNode, replacementNode
+integer :: balanceFactor
+!No se por que se autobalancea sin hacer nada aca, pero si se hace el rebalanceo asi que mejor no tocarlo
+!Seguro es por la manera en la que ya hace las rotaciones al igual con solo insertar
+end function rebalance
+
 
    function getABBValues(self, Id) result(values)
       class(Tree_t), intent(in) :: self
@@ -43,21 +135,22 @@ contains
       end if
    end function getABBValues
 
+
    subroutine printAVLandABB(self)
       class(Tree_t), intent(inout) :: self
 
       call printAVLandABBRec(self%root)
    end subroutine printAVLandABB
 
-   recursive subroutine printAVLandABBRec(node)
-      type(Node_tAVL), pointer :: node
+   recursive subroutine printAVLandABBRec(Anode)
+      type(Node_tAVL), pointer :: Anode
 
-      if (associated(node)) then
-         print *, "AVL Node: ", node%Value
+      if (associated(Anode)) then
+         print *, "AVL Node: ", Anode%Value
          print *, "ABB in AVL Node: "
-         call node%NodoABB%amplitud()
-         call printAVLandABBRec(node%Left)
-         call printAVLandABBRec(node%Right)
+         call Anode%NodoABB%amplitud()
+         call printAVLandABBRec(Anode%Left)
+         call printAVLandABBRec(Anode%Right)
       end if
    end subroutine printAVLandABBRec
 
@@ -266,26 +359,29 @@ contains
 end function empty_string
 
 recursive subroutine RoamTree(actual, createNodes, linkNodes, abbDotCode)
-type(Node_tAVL), pointer :: actual
-character(len=:), allocatable, intent(inout) :: createNodes, linkNodes, abbDotCode
-character(len=20) :: address, str_value
-character(len=:), allocatable :: abbCode
-character(len=:), allocatable :: abbCreateNodes, abbLinkNodes
+    type(Node_tAVL), pointer :: actual
+    character(len=:), allocatable, intent(inout) :: createNodes, linkNodes, abbDotCode
+    character(len=20) :: address, str_value
+    character(len=:), allocatable :: abbCode
+    character(len=:), allocatable :: abbCreateNodes, abbLinkNodes
 
     if (associated(actual)) then
         ! SE OBTIENE INFORMACION DEL NODO ACTUAL
         address = get_address_memory(actual)
         write (str_value, '(I0)') actual%Value
-        createNodes = createNodes//'"'//trim(address)//'"'//'[label="'//trim(str_value)//'"];'//new_line('a')
+        createNodes = createNodes//'"'//trim(address)//'"'//'[label="'//trim(str_value)//&
+        '", shape="rectangle", color="#0400ff",   style="diagonals"];'//new_line('a')
 
         ! Generar código dot para el ABB de este nodo AVL
         abbCreateNodes = ""
         abbLinkNodes = ""
-        abbCode = "subgraph cluster_" // trim(address) // " { " // new_line('a')
-        abbCode = abbCode // "label=""ABB"";" // new_line('a')
-        abbCode = abbCode // generateABBDotCode(actual%NodoABB%root, abbCreateNodes, abbLinkNodes)
-        abbCode = abbCode // "}" // new_line('a')
+        abbCode = generateABBDotCode(actual%NodoABB%root, abbCreateNodes, abbLinkNodes)
         abbDotCode = abbDotCode // abbCode
+
+        ! Conectar el nodo AVL con el árbol ABB
+        abbLinkNodes = ""
+        call generateABBLinks(actual%NodoABB%root, address, abbLinkNodes)
+        linkNodes = linkNodes // abbLinkNodes
 
         ! VIAJAMOS A LA SUBRAMA IZQ
         if (associated(actual%Left)) then
@@ -307,6 +403,32 @@ character(len=:), allocatable :: abbCreateNodes, abbLinkNodes
         call RoamTree(actual%Right, createNodes, linkNodes, abbDotCode)
     end if
 end subroutine RoamTree
+
+recursive subroutine generateABBLinks(root, avlAddress, linkNodes)
+    type(Node_tABB), pointer :: root
+    character(len=*), intent(in) :: avlAddress
+    character(len=:), allocatable, intent(inout) :: linkNodes
+    character(len=20) :: address
+
+    if (associated(root)) then
+        address = get_address_memoryABB(root)
+        linkNodes = linkNodes//'"'//trim(avlAddress)//'"'//" -> "//'"'//trim(address)//'"' &
+                    //' [style=dashed, arrowhead=none];'//new_line('a')
+ 
+    end if
+end subroutine generateABBLinks
+
+function get_address_memoryABB(node) result(address)
+    type(Node_tABB), pointer :: node
+    character(len=20) :: address
+    integer*8 :: i
+
+    i = loc(node) ! get the address of x
+    ! convert the address to string
+    write (address, 10) i
+10  format(I0)
+end function get_address_memoryABB
+
    function get_address_memory(node) result(address)
       !class(matrix_t), intent(in) :: self
       type(Node_tAVL), pointer :: node
