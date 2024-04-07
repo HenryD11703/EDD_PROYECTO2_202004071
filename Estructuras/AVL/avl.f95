@@ -35,6 +35,8 @@ module TreeAVL_M
       procedure :: getABBValues
       procedure :: delete
       procedure :: CantidadABBenAVL
+      procedure :: GenerateGraph2
+
 
    end type Tree_t
 
@@ -451,5 +453,70 @@ end function get_address_memoryABB
       ! Genera la imagen PNG
       call system("dot -Tpng graphAVL.dot -o GraficaAVL.png")
    end subroutine write_dot
+
+   subroutine write_dot2(code)
+      character(len=*), intent(in) :: code
+      open(10, file='Grafica2AVL.dot', status='replace', action='write')
+      write(10, '(A)') trim(code)
+      close(10)
+      ! Genera la imagen PNG
+      call system("dot -Tpng Grafica2AVL.dot -o Grafica2AVL.png")
+    end subroutine write_dot2
+
+
+   subroutine GenerateGraph2(this)
+      class(Tree_t), intent(inout) :: this
+      character(len=:), allocatable :: dotStructure
+      character(len=:), allocatable :: createNodes
+      character(len=:), allocatable :: linkNodes
+      createNodes = ''
+      linkNodes = ''
+  
+  
+      dotStructure = "digraph G{" // new_line('a')
+      dotStructure = dotStructure // "node [shape=circle];" // new_line('a')
+  
+      if (associated(this%root)) then
+          call RoamTree2(this%root, createNodes, linkNodes)
+      end if
+  
+      dotStructure = dotStructure // trim(createNodes) // trim(linkNodes) // "}" // new_line('a')
+      call write_dot2(dotStructure)
+      print *, "Archivo actualizado existosamente."
+  end subroutine GenerateGraph2
+  
+  recursive subroutine RoamTree2(actual, createNodes, linkNodes)
+      type(Node_tAVL), pointer :: actual
+      character(len=:), allocatable, intent(inout) :: createNodes
+      character(len=:), allocatable, intent(inout) :: linkNodes
+      character(len=20) :: address
+      character(len=20) :: str_value
+  
+      if (associated(actual)) then
+          ! SE OBTIENE INFORMACION DEL NODO ACTUAL
+        address = get_address_memory(actual)
+        write(str_value, '(I0)') actual%Value
+        createNodes = createNodes // '"' // trim(address) // '"' // '[label="' // trim(str_value) // '"];' // new_line('a')
+        ! VIAJAMOS A LA SUBRAMA IZQ
+        if (associated(actual%Left)) then
+          linkNodes = linkNodes // '"' // trim(address) // '"' // " -> "
+          address = get_address_memory(actual%Left)
+          linkNodes = linkNodes // '"' // trim(address) // '" ' &
+                    // '[label = "L"];' // new_line('a')
+  
+        end if
+        ! VIAJAMOS A LA SUBRAMA DER
+        if (associated(actual%Right)) then
+          address = get_address_memory(actual)
+          linkNodes = linkNodes // '"' // trim(address) // '"' // " -> "
+          address = get_address_memory(actual%Right)
+          linkNodes = linkNodes // '"' // trim(address) // '" ' &
+                    // '[label = "R"];' // new_line('a')
+        end if
+  
+        call RoamTree2(actual%Left, createNodes, linkNodes)
+        call RoamTree2(actual%Right, createNodes, linkNodes)
+      end if
+  end subroutine RoamTree2
 
 end module TreeAVL_M

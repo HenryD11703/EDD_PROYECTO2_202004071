@@ -1,4 +1,5 @@
 module BTree
+    use ColaB
     implicit none
 
     type UsuarioB
@@ -40,6 +41,66 @@ module BTree
 
 !   c. Caso 3c: Si ninguno de los hijos adyacentes a K en N tiene más de t-1 claves, entonces combinamos K y todos los descendientes de K que están en los dos hijos en un solo nodo.
     
+
+    recursive function getTreeHeight(node) result(height)
+    type(BTreeNode), pointer, intent(in) :: node
+    integer :: height,i
+
+    if (.not. associated(node)) then
+        height = 0
+    else
+        height = 1
+        do i = 0, node%num
+            height = max(height, getTreeHeight(node%link(i)%ptr) + 1)
+        end do
+    end if
+end function getTreeHeight
+
+    recursive subroutine printUsersByLevel(node, level)
+    type(BTreeNode), pointer, intent(in) :: node
+    integer, intent(in) :: level
+    integer :: i
+
+    if (associated(node)) then
+        if (level == 0) then
+            i = 0
+            do while (i < node%num)
+                write(*, '(A, 1I20, A, A, A, A)') ' ID: ', node%val(i+1)%id, &
+                ', Nombre: ', trim(node%val(i+1)%nombre), ', Contraseña: ', trim(node%val(i+1)%contrasena)
+                i = i + 1
+            end do
+        else
+            i = 0
+            do while (i <= node%num)
+                call printUsersByLevel(node%link(i)%ptr, level-1)
+                i = i + 1
+            end do
+        end if
+    end if
+end subroutine printUsersByLevel
+        
+     
+
+    recursive subroutine printUserData(node, id)
+    type(BTreeNode), pointer, intent(in) :: node
+    integer(kind=8), intent(in) :: id
+    integer :: i
+
+    if (associated(node)) then
+        i = 0
+        do while (i < node%num)
+            if (node%val(i+1)%id == id) then
+                write(*, '(A, 1I20)') 'ID: ', node%val(i+1)%id
+                write(*, '(A, A)') 'Nombre: ', trim(node%val(i+1)%nombre)
+                write(*, '(A, A)') 'Contraseña: ', trim(node%val(i+1)%contrasena)
+                return
+            end if
+            call printUserData(node%link(i)%ptr, id)
+            i = i + 1
+        end do
+        call printUserData(node%link(i)%ptr, id)
+    end if
+end subroutine printUserData
 
     recursive subroutine updateB( usuario)
     type(UsuarioB), intent(in) :: usuario

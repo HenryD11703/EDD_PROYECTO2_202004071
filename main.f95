@@ -44,7 +44,6 @@ contains
       end select
  
    end do 
-
    end subroutine
 
    subroutine register()
@@ -125,19 +124,22 @@ contains
       integer :: choiceR = 0
       type(pixel), dimension(:), allocatable :: pixelsV
       integer :: idCapa, iC
-      character(:), allocatable :: idCapaS
+      character(len=5), allocatable :: idCapaS
+      character(len=20) :: temp_str,idImagenS
       do  
          print *, "----------", trim(username), "----------"
-         print *, "1. Ver Arbol de Imagenes"
-         print *, "2. Ver Arbol de Capas"
-         print *, "3. Ver listado de Albumes"
-         print *, "4. Ver Capa en la matriz dispersa"
-         print *, "5. Salir"
+         print *, "1. Ver Arbol de Imagenes (AVL)"
+         print *, "2. Ver Arbol de Capas (ABB)"
+         print *, "3. Ver listado de Albumes (Circle List)"
+         print *, "4. Ver Capa en la matriz dispersa (Matriz)"
+         print *, "5. Ver Imagen y Arbol de Capas"
+         print *, "6. Salir"
          print *, "Seleccione una opcion:"
          read *, choiceR
          select case (choiceR)
          case (1)
-            call system("start D:\EDD_PROYECTO2_202004071\executable\GraficaAVL.png")
+            call treeAVL%GenerateGraph2()
+            call system("start D:\EDD_PROYECTO2_202004071\executable\Grafica2AVL.png")
          case (2)
             call system("start D:\EDD_PROYECTO2_202004071\executable\ABBgraph.png")
          case (3)
@@ -148,11 +150,15 @@ contains
             read *, idCapa
             pixelsV = treeABB%getPixelsById(idCapa)
             do iC = 1, size(pixelsV)
-               print *, "Fila: ", pixelsV(iC)%Fila, " Columna: ", pixelsV(iC)%Columna, " Color: ", pixelsV(iC)%color
-            end do            
-            write (idCapaS, '(I10)') idCapa
+               call matrixD%add(pixelsV(iC)%Fila, pixelsV(iC)%Columna, pixelsV(iC)%color)
+            end do
+            write(temp_str, '(I10)') idCapa
+            idCapaS = adjustl(temp_str)
             call matrixD%create_dot("Capa"//trim(idCapaS))
+            call system("start D:\EDD_PROYECTO2_202004071\executable\Capa"//trim(idCapaS)//".png")
          case (5)
+            call system("start D:\EDD_PROYECTO2_202004071\executable\GraficaAVL.png")
+         case (6)
             return
          case default
             print *, "Opcion Invalida."
@@ -393,7 +399,7 @@ contains
          case (2)
             call treeABB%printLeafNodes()
          case (3)
-            !call treeABB%depth()
+            call treeABB%print_tree_depth()            
          case (4)
             print *, "---Lista de capas---"
             print *, "Preorden"
@@ -456,7 +462,7 @@ contains
       character(len=20), intent(in) :: username
       integer :: choiceG = 0
       print *, "USUARIO: ", username
-      do while (choiceG /= 4)
+      do  
          print *, "Generacion de Imagenes"
          print *, "1. Generar Imagen Por recorrido Limitado"
          print *, "2. Generar Imagen Por Arbol de imagenes"
@@ -500,7 +506,7 @@ contains
 
       call matrixD%init()
       do IV = 1, size(datosAA)
-         print *, datosAA(IV)
+         !print *, datosAA(IV)
          pixelesA = treeABB%getPixelsById(datosAA(IV))
          do I = 1, size(pixelesA)
             call matrixD%add(pixelesA(I)%Fila, pixelesA(I)%Columna, pixelesA(I)%color)
@@ -509,6 +515,7 @@ contains
       print *, "Con que nombre desea guardar la imagen?"
       read *, nombreImagen
       call matrixD%create_dot(trim(nombreImagen))
+      call system("start D:\EDD_PROYECTO2_202004071\executable\"//trim(nombreImagen)//".png")
    end subroutine
 
    subroutine generate_image_by_cape_ids(username)
@@ -545,6 +552,7 @@ contains
       print *, "Con que nombre desea guardar la imagen?"
       read *, nombreImagen
       call matrixD%create_dot(trim(nombreImagen))
+      call system("start D:\EDD_PROYECTO2_202004071\executable\"//trim(nombreImagen)//".png")
 
    end subroutine
 
@@ -555,7 +563,7 @@ contains
       character(:), allocatable :: datos, datosInorder, datosPos
       type(pixel), dimension(:), allocatable :: pixelsI, pixelsI2
 
-      do while (iPre /= 4)
+      do  
          print *, "USUARIO: ", username
          print *, "Ingrese que recorrido desea hacer:"
          print *, "1. Preorden"
@@ -578,7 +586,7 @@ contains
             !end do
             call matrixD%init()
             do iPre = 1, cantidadCapas
-               print *, datosA(iPre)
+       
                !Buscar los ids de estas capas y obtener los pixeles de estos en un arreglo de pixeles
                !Luego mandar a llamar la funcion para crear la imagen
                pixelsI = treeABB%getPixelsById(datosA(iPre))
@@ -589,6 +597,7 @@ contains
                end do
             end do
             call matrixD%create_dot("ImagenPreorden")
+            call system("start D:\EDD_PROYECTO2_202004071\executable\ImagenPreorden.png")
          case (2)
             call matrixD%init()
             call treeABB%inorder()
@@ -596,7 +605,7 @@ contains
             datosInorder = datosInorder(2:)
             datosA = DatosCapas(datosInorder)
             do iPre1 = 1, cantidadCapas
-               print *, datosA(iPre1)
+          
                pixelsI2 = treeABB%getPixelsById(datosA(iPre1))
                do iPixelPre = 1, size(pixelsI2)
                   call matrixD%add(pixelsI2(iPixelPre)%Fila, pixelsI2(iPixelPre)%Columna, pixelsI2(iPixelPre)%color)
@@ -605,6 +614,7 @@ contains
             end do
 
             call matrixD%create_dot("ImagenInorden")
+            call system("start D:\EDD_PROYECTO2_202004071\executable\ImagenInorden.png")
          case (3)
             call matrixD%init()
             call treeABB%posorder()
@@ -614,13 +624,17 @@ contains
             print *, "Datos: ", datosPos
             datosA = DatosCapas(datosPos)
             do iPre1 = 1, cantidadCapas
-               print *, datosA(iPre1)
+                
                pixelsI2 = treeABB%getPixelsById(datosA(iPre1))
                do iPixelPre = 1, size(pixelsI2)
                   call matrixD%add(pixelsI2(iPixelPre)%Fila, pixelsI2(iPixelPre)%Columna, pixelsI2(iPixelPre)%color)
                end do
             end do
             call matrixD%create_dot("ImagenPostorden")
+            call system("start D:\EDD_PROYECTO2_202004071\executable\ImagenPostorden.png")
+
+         case (4)
+            exit
          case default
             print *, "Opcion Invalida."
          end select
@@ -685,7 +699,8 @@ contains
          print *, "2. Arbol B de usuarios"
          print *, "3. Modificar usuarios"
          print *, "4. Eliminar usuarios"
-         print *, "5. Salir"
+         print *, "5. Reportes de administrador"
+         print *, "6. Salir"
          print *, "Seleccione una opcion:"
          read *, choiceA
          select case (choiceA)
@@ -705,15 +720,45 @@ contains
 
             print *, "Actualizando arbol B..."
 
-            call traversal(root) 
+            !call traversal(root) 
             call writeGraphviz(root,"GraficaArbolB.dot")
             call system("dot -Tpng D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.dot&
             & -o D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.png")
             
-       
          case (5)
+            call admin_reports()
+         case (6)
             return
             
+         case default
+            print *, "Opcion Invalida."
+         end select
+      end do
+   end subroutine
+
+   subroutine admin_reports()
+      integer :: choiceAR = 0, altura,i
+      integer(kind=8) :: idBuscar
+      do
+         print *, "1. Buscar Usuario"
+         print *, "2. Listar Usuarios en recorrido por Niveles"
+         print *, "3. Salir"
+         print *, "Seleccione una opcion:"
+         read *, choiceAR
+         select case (choiceAR)
+         case (1)
+            print *, "Ingrese el DPI del usuario a buscar: "
+            read *, idBuscar
+            call printUserData(root, idBuscar)
+         case (2)
+             altura = getTreeHeight(root)
+               do i = 0, altura
+                  print *, "Nivel ", i
+                  call printUsersByLevel(root,i)
+               end do
+              
+         case (3)
+            return
          case default
             print *, "Opcion Invalida."
          end select
@@ -737,7 +782,7 @@ contains
       call updateB(usuarioMod)
       print *, "Usuario modificado con exito."
       print *, "Actualizando arbol B..."
-      call traversal(root)
+      !call traversal(root)
       call writeGraphviz(root,"GraficaArbolB.dot")
       call system("dot -Tpng D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.dot&
       & -o D:\EDD_PROYECTO2_202004071\executable\GraficaArbolB.png")       
@@ -791,7 +836,7 @@ contains
       print *, "Usuarios cargados"
  
 
-      call traversal(root)
+      !call traversal(root)
       print *, ""
 
       call writeGraphviz(root,"GraficaArbolB.dot")

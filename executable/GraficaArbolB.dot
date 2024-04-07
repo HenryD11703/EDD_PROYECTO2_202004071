@@ -1,4 +1,0 @@
-digraph g {
-node [shape = record,height=.1];
-node1406925699952 [label = "<f0>                  123\nhenry|<f1> "];
-}

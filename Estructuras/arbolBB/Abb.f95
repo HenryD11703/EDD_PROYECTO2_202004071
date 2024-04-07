@@ -34,10 +34,30 @@ module abb_m
       procedure :: getPixelsById
       procedure :: getPixelSizeByID
       procedure :: printLeafNodes
+      procedure :: print_tree_depth
       
    end type abb
 
 contains
+
+recursive function get_depth(root) result(depth)
+    type(Node_t), pointer, intent(in) :: root
+    integer :: depth
+
+    if (.not. associated(root)) then
+        depth = 0
+    else
+        depth = 1 + max(get_depth(root%left), get_depth(root%right))
+    end if
+end function get_depth
+
+subroutine print_tree_depth(self)
+    class(abb), intent(in) :: self
+    integer :: depth
+
+    depth = get_depth(self%root)
+    write (*, '("Profundidad del arbol de capas: ", I0)') depth
+end subroutine print_tree_depth
 
 subroutine printLeafNodes(self)
    class(abb), intent(in) :: self
